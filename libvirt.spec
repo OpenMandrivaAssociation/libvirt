@@ -1,5 +1,5 @@
 %define name libvirt
-%define version 0.2.0
+%define version 0.2.2
 %define release %mkrel 1
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
@@ -18,8 +18,8 @@ Summary:    Toolkit to %{common_summary}
 License:    LGPL
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
-Source0:    ftp://libvirt.org/%{name}/%{name}-%{version}.tar.bz2
-BuildRequires:  xen
+Source0:    ftp://libvirt.org/%{name}/%{name}-%{version}.tar.gz
+BuildRequires:  xen >= 3.0.4
 BuildRequires:  libxml2-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
@@ -139,7 +139,7 @@ rm -rf %{buildroot}
 %files -n %{name}-utils
 %defattr(-,root,root)
 %{_bindir}/virsh
-%{_libdir}/libvirt_qemud
 %{_mandir}/man1/virsh.1*
-
-
+%{_sbindir}/libvirt_qemud
+%{_initrddir}/libvirtd
+%config(noreplace) %{_sysconfdir}/libvirt
