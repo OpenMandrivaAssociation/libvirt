@@ -1,5 +1,5 @@
 %define name libvirt
-%define version 0.2.2
+%define version 0.2.3
 %define release %mkrel 1
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
