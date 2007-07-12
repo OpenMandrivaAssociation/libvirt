@@ -1,5 +1,5 @@
 %define name libvirt
-%define version 0.2.3
+%define version 0.3.0
 %define release %mkrel 1
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
@@ -7,6 +7,8 @@ capabilities of recent versions of Linux.
 %define lib_major 0
 
 %define lib_name %mklibname virt %{lib_major}
+%define develname %mklibname -d virt
+%define staticdevelname %mklibname -d -s virt
 
 # libxenstore is not versionned properly
 %define _requires_exceptions devel(libxenstore.*)
@@ -48,24 +50,26 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with %{name}.
 
-%package -n	%{lib_name}-devel
+%package -n	%{develname}
 Summary:	Development tools for programs using %{name}
 Group:		Development/C
 Requires:	%{lib_name} = %{version}
 Provides:	%{name}-devel = %{version}-%{release}
+Obsoletes:	%{lib_name}-devel
 
-%description -n	%{lib_name}-devel
+%description -n	%{develname}
 %{common_description}
 
 This package contains the header files and libraries needed for
 developing programs using the %{name} library.
 
-%package -n	%{lib_name}-static-devel
+%package -n	%{staticdevelname}
 Summary:	Development static libraries for programs using %{name}
 Group:		Development/C
 Provides:	%{name}-static-devel = %{version}-%{release}
+Obsoletes:	%{lib_name}-static-devel
 
-%description -n	%{lib_name}-static-devel
+%description -n	%{staticdevelname}
 %{common_description}
 
 This package contains the static libraries needed for developing
@@ -114,17 +118,17 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}.so.*
 %{_libdir}/%{name}_proxy
 
-%files -n %{lib_name}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %doc %{_docdir}/%{name}-%{version}
 %doc %{_datadir}/gtk-doc/html/%{name}
-%dir /usr/include/%{name}
-/usr/include/%{name}/*.h
+%dir %{_includedir}/%{name}
+%{_includedir}/%{name}/*.h
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}.la
 %{_libdir}/pkgconfig/%{name}.pc
 
-%files -n %{lib_name}-static-devel
+%files -n %{staticdevelname}
 %defattr(-,root,root)
 %{_libdir}/%{name}.a
 
