@@ -142,8 +142,8 @@ rm -rf %{buildroot}
 
 %files -n %{name}-utils
 %defattr(-,root,root)
-%{_bindir}/virsh
+%{_bindir}/*
 %{_mandir}/man1/virsh.1*
-%{_sbindir}/libvirt_qemud
+%{_sbindir}/*
 %{_initrddir}/libvirtd
 %config(noreplace) %{_sysconfdir}/libvirt
