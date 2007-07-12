@@ -146,4 +146,5 @@ rm -rf %{buildroot}
 %{_mandir}/man1/virsh.1*
 %{_sbindir}/*
 %{_initrddir}/libvirtd
+%{_sysconfdir}/sysconfig/libvirtd
 %config(noreplace) %{_sysconfdir}/libvirt
