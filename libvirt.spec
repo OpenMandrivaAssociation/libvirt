@@ -104,6 +104,7 @@ This package contains tools for the %{name} library.
 %install
 rm -rf %{buildroot}
 %makeinstall
+install -d -m 755 %{buildroot}%{_var}/run/%{name}
 %find_lang %{name}
 
 %clean
@@ -147,4 +148,5 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
+%{_var}/run/libvirt
 %config(noreplace) %{_sysconfdir}/libvirt
