@@ -1,6 +1,6 @@
 %define name libvirt
 %define version 0.3.2
-%define release %mkrel 1
+%define release %mkrel 2
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
@@ -98,7 +98,7 @@ This package contains tools for the %{name} library.
 %setup -q
 
 %build
-%configure2_5x
+%configure2_5x --localstatedir=%{_var}
 %make
 
 %install
