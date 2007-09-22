@@ -98,7 +98,7 @@ This package contains tools for the %{name} library.
 %setup -q
 
 %build
-%configure2_5x --localstatedir=%{_var}
+%configure2_5x --localstatedir=%{_var} --with-html-subdir=%{name}
 %make
 
 %install
@@ -106,6 +106,10 @@ rm -rf %{buildroot}
 %makeinstall
 install -d -m 755 %{buildroot}%{_var}/run/%{name}
 %find_lang %{name}
+
+# fix documentation
+mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
+install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -115,16 +119,23 @@ rm -rf %{buildroot}
 
 %files -n %{lib_name} -f %{name}.lang
 %defattr(-,root,root)
-%doc ChangeLog README TODO NEWS
+%dir %{_docdir}/%{name}
+%{_docdir}/%{name}/ChangeLog
+%{_docdir}/%{name}/README
+%{_docdir}/%{name}/TODO
+%{_docdir}/%{name}/NEWS
 %{_libdir}/%{name}.so.%{lib_major}*
 %{_libdir}/%{name}_proxy
 
 %files -n %{develname}
 %defattr(-,root,root)
-%doc %{_docdir}/%{name}-%{version}
+%{_docdir}/%{name}
+%exclude %{_docdir}/%{name}/ChangeLog
+%exclude %{_docdir}/%{name}/README
+%exclude %{_docdir}/%{name}/TODO
+%exclude %{_docdir}/%{name}/NEWS
 %doc %{_datadir}/gtk-doc/html/%{name}
-%dir %{_includedir}/%{name}
-%{_includedir}/%{name}/*.h
+%{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}.la
 %{_libdir}/pkgconfig/%{name}.pc
@@ -135,7 +146,7 @@ rm -rf %{buildroot}
 
 %files -n python-%{name}
 %defattr(-,root,root)
-%doc %{_docdir}/%{name}-python-%{version}
+%doc %{_docdir}/python-%{name}
 %{py_platsitedir}/%{name}.py
 %{py_platsitedir}/%{name}mod.a
 %{py_platsitedir}/%{name}mod.la
