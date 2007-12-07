@@ -1,6 +1,6 @@
 %define name libvirt
-%define version 0.3.2
-%define release %mkrel 2
+%define version 0.3.3
+%define release %mkrel 1
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
@@ -21,7 +21,7 @@ License:    LGPL
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source0:    ftp://libvirt.org/%{name}/%{name}-%{version}.tar.gz
-BuildRequires:  xen >= 3.0.4
+BuildRequires:  xen-devel >= 3.0.4
 BuildRequires:  libxml2-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
