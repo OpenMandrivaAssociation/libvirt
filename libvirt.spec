@@ -27,7 +27,6 @@ BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
-BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 
 %description
