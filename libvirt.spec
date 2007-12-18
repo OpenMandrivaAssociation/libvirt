@@ -1,6 +1,3 @@
-%define name libvirt
-%define version 0.3.3
-%define release %mkrel 1
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
@@ -13,21 +10,22 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define _requires_exceptions devel(libxenstore.*)
 
-Name:       %{name}
-Version:    %{version}
-Release:    %{release}
-Summary:    Toolkit to %{common_summary}
-License:    LGPL
-Group:      System/Kernel and hardware
-Url:        http://libvirt.org/
-Source0:    ftp://libvirt.org/%{name}/%{name}-%{version}.tar.gz
-BuildRequires:  xen-devel >= 3.0.4
-BuildRequires:  libxml2-devel
-BuildRequires:  ncurses-devel
-BuildRequires:  readline-devel
-BuildRequires:  python-devel
-BuildRequires:  gnutls-devel
-
+Name:		libvirt
+Version:	0.4.0
+Release:	%mkrel 1
+Summary:	Toolkit to %{common_summary}
+License:	LGPL
+Group:		System/Kernel and hardware
+Url:		http://libvirt.org/
+Source0		ftp://libvirt.org/libvirt/libvirt-%{version}.tar.gz
+# XXX: for %%{_sysconfdir}/sasl2
+Requires:	cyrus-sasl
+BuildRequires:	xen-devel >= 3.0.4
+BuildRequires:	libxml2-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	readline-devel
+BuildRequires:	python-devel
+BuildRequires:	gnutls-devel
 
 %description
 %{common_description}
@@ -91,7 +89,6 @@ Group:		System/Kernel and hardware
 %{common_description}
 
 This package contains tools for the %{name} library.
-
 
 %prep
 %setup -q
@@ -160,3 +157,4 @@ rm -rf %{buildroot}
 %{_sysconfdir}/sysconfig/libvirtd
 %{_var}/run/libvirt
 %config(noreplace) %{_sysconfdir}/libvirt
+%config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
