@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:		libvirt
 Version:	0.4.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 Summary:	Toolkit to %{common_summary}
 License:	LGPL
 Group:		System/Kernel and hardware
@@ -26,6 +26,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	python-devel
 BuildRequires:	gnutls-devel
+BuildRequires:  libsasl-devel
 
 %description
 %{common_description}
