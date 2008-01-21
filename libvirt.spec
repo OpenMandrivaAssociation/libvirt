@@ -12,9 +12,9 @@ capabilities of recent versions of Linux.
 
 Name:		libvirt
 Version:	0.4.0
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	Toolkit to %{common_summary}
-License:	LGPL
+License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0		ftp://libvirt.org/libvirt/libvirt-%{version}.tar.gz
