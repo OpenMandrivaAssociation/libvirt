@@ -16,6 +16,7 @@ Release:	%mkrel 3
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Url:		http://libvirt.org/
 Source0		ftp://libvirt.org/libvirt/libvirt-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
