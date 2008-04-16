@@ -11,14 +11,14 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:		libvirt
-Version:	0.4.0
-Release:	%mkrel 3
+Version:	0.4.2
+Release:	%mkrel 1
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Url:		http://libvirt.org/
-Source0		ftp://libvirt.org/libvirt/libvirt-%{version}.tar.gz
+Source0		http://libvirt.org/sources/%{name}-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:	cyrus-sasl
 BuildRequires:	xen-devel >= 3.0.4
@@ -96,7 +96,10 @@ This package contains tools for the %{name} library.
 %setup -q
 
 %build
-%configure2_5x --localstatedir=%{_var} --with-html-subdir=%{name}
+%configure2_5x \
+    --localstatedir=%{_var}  \
+    --with-html-subdir=%{name} \
+    --with-storage-disk=off
 %make
 
 %install
