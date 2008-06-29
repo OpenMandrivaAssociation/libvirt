@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:		libvirt
-Version:	0.4.2
+Version:	0.4.4
 Release:	%mkrel 1
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
@@ -130,7 +130,7 @@ rm -rf %{buildroot}
 %{_docdir}/%{name}/TODO
 %{_docdir}/%{name}/NEWS
 %{_libdir}/%{name}.so.%{lib_major}*
-%{_libdir}/%{name}_proxy
+#%{_libdir}/%{name}_proxy
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -165,5 +165,6 @@ rm -rf %{buildroot}
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
 %{_var}/run/libvirt
+%{_datadir}/PolicyKit/policy/libvirtd.policy
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
