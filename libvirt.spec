@@ -16,7 +16,6 @@ Release:	%mkrel 1
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Url:		http://libvirt.org/
 Source0		http://libvirt.org/sources/%{name}-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
@@ -28,6 +27,11 @@ BuildRequires:	readline-devel
 BuildRequires:	python-devel
 BuildRequires:	gnutls-devel
 BuildRequires:  libsasl-devel
+BuildRequires:  polkit-devel
+BuildRequires:  parted-devel
+BuildRequires:  open-iscsi
+BuildRequires:  lvm2
+BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
 %{common_description}
@@ -99,7 +103,7 @@ This package contains tools for the %{name} library.
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
-    --with-storage-disk=off
+    --with-xen-proxy
 %make
 
 %install
@@ -163,7 +167,8 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
-%{_libdir}/%{name}_proxy
+%{_libdir}/libvirt_proxy
+%{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_datadir}/PolicyKit/policy/libvirtd.policy
 %config(noreplace) %{_sysconfdir}/libvirt
