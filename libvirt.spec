@@ -130,7 +130,6 @@ rm -rf %{buildroot}
 %{_docdir}/%{name}/TODO
 %{_docdir}/%{name}/NEWS
 %{_libdir}/%{name}.so.%{lib_major}*
-#%{_libdir}/%{name}_proxy
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -164,6 +163,7 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
+%{_libdir}/%{name}_proxy
 %{_var}/run/libvirt
 %{_datadir}/PolicyKit/policy/libvirtd.policy
 %config(noreplace) %{_sysconfdir}/libvirt
