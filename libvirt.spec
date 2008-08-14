@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:		libvirt
 Version:	0.4.4
-Release:	%mkrel 1
+Release:	%mkrel 2
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -57,6 +57,7 @@ linked with %{name}.
 Summary:	Development tools for programs using %{name}
 Group:		Development/C
 Requires:	%{lib_name} = %{version}
+Requires:	xen-devel
 Provides:	%{name}-devel = %{version}-%{release}
 Obsoletes:	%{lib_name}-devel
 
