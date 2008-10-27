@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:		libvirt
 Version:	0.4.6
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -92,6 +92,7 @@ This package contains the python bindings for the %{name} library.
 Summary:	Tools to %{common_summary}
 Group:		System/Kernel and hardware
 Requires:	bridge-utils
+Suggests:	dnsmasq-base
 
 %description -n	%{name}-utils
 %{common_description}
@@ -112,6 +113,7 @@ This package contains tools for the %{name} library.
 rm -rf %{buildroot}
 %makeinstall
 install -d -m 755 %{buildroot}%{_var}/run/%{name}
+install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
 # fix documentation
@@ -173,6 +175,7 @@ rm -rf %{buildroot}
 %{_libdir}/libvirt_proxy
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
+%{_var}/lib/libvirt
 %{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
 %{_datadir}/augeas
 %config(noreplace) %{_sysconfdir}/libvirt
