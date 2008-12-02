@@ -10,14 +10,16 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define _requires_exceptions devel(libxenstore.*)
 
+%define _disable_ld_as_needed 1
+
 Name:		libvirt
-Version:	0.4.6
-Release:	%mkrel 3
+Version:	0.5.0
+Release:	%mkrel 1
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
-Source0		http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Source		http://libvirt.org/sources/%{name}-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:	cyrus-sasl
 BuildRequires:	xen-devel >= 3.0.4
@@ -28,6 +30,7 @@ BuildRequires:	python-devel
 BuildRequires:	gnutls-devel
 BuildRequires:  libsasl-devel
 BuildRequires:  polkit-devel
+BuildRequires:  hal-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
