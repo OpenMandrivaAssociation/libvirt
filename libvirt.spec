@@ -13,13 +13,13 @@ capabilities of recent versions of Linux.
 %define _disable_ld_as_needed 1
 
 Name:		libvirt
-Version:	0.5.0
+Version:	0.5.1
 Release:	%mkrel 1
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
-Source		http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Source:		http://libvirt.org/sources/%{name}-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:	cyrus-sasl
 BuildRequires:	xen-devel >= 3.0.4
