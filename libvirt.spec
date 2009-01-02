@@ -14,7 +14,7 @@ capabilities of recent versions of Linux.
 
 Name:		libvirt
 Version:	0.5.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 Summary:	Toolkit to %{common_summary}
 License:	LGPLv2+
 Group:		System/Kernel and hardware
