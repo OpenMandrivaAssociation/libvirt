@@ -14,7 +14,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.5.1
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -95,6 +95,7 @@ This package contains the python bindings for the %{name} library.
 Summary:    Tools to %{common_summary}
 Group:      System/Kernel and hardware
 Requires:   bridge-utils
+Requires:   %{lib_name} = %{version}
 Suggests:   dnsmasq-base
 
 %description -n %{name}-utils
