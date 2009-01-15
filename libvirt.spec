@@ -12,22 +12,22 @@ capabilities of recent versions of Linux.
 
 %define _disable_ld_as_needed 1
 
-Name:		libvirt
-Version:	0.5.1
-Release:	%mkrel 2
-Summary:	Toolkit to %{common_summary}
-License:	LGPLv2+
-Group:		System/Kernel and hardware
-Url:		http://libvirt.org/
-Source:		http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Name:       libvirt
+Version:    0.5.1
+Release:    %mkrel 2
+Summary:    Toolkit to %{common_summary}
+License:    LGPLv2+
+Group:      System/Kernel and hardware
+Url:        http://libvirt.org/
+Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 # XXX: for %%{_sysconfdir}/sasl2
-Requires:	cyrus-sasl
-BuildRequires:	xen-devel >= 3.0.4
-BuildRequires:	libxml2-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	readline-devel
-BuildRequires:	python-devel
-BuildRequires:	gnutls-devel
+Requires:   cyrus-sasl
+BuildRequires:  xen-devel >= 3.0.4
+BuildRequires:  libxml2-devel
+BuildRequires:  ncurses-devel
+BuildRequires:  readline-devel
+BuildRequires:  python-devel
+BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
 BuildRequires:  polkit-devel
 BuildRequires:  hal-devel
@@ -46,58 +46,58 @@ Linux instance. The library aim at providing long term stable C API
 initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
-%package -n	%{lib_name}
-Summary:	A library to %{common_summary}
-Group:		System/Libraries
+%package -n %{lib_name}
+Summary:    A library to %{common_summary}
+Group:      System/Libraries
 
-%description -n	%{lib_name}
+%description -n %{lib_name}
 %{common_description}
 
 This package contains the library needed to run programs dynamically
 linked with %{name}.
 
-%package -n	%{develname}
-Summary:	Development tools for programs using %{name}
-Group:		Development/C
-Requires:	%{lib_name} = %{version}
-Requires:	xen-devel
-Provides:	%{name}-devel = %{version}-%{release}
-Obsoletes:	%{lib_name}-devel
+%package -n %{develname}
+Summary:    Development tools for programs using %{name}
+Group:      Development/C
+Requires:   %{lib_name} = %{version}
+Requires:   xen-devel
+Provides:   %{name}-devel = %{version}-%{release}
+Obsoletes:  %{lib_name}-devel
 
-%description -n	%{develname}
+%description -n %{develname}
 %{common_description}
 
 This package contains the header files and libraries needed for
 developing programs using the %{name} library.
 
-%package -n	%{staticdevelname}
-Summary:	Development static libraries for programs using %{name}
-Group:		Development/C
-Provides:	%{name}-static-devel = %{version}-%{release}
-Obsoletes:	%{lib_name}-static-devel
+%package -n %{staticdevelname}
+Summary:    Development static libraries for programs using %{name}
+Group:      Development/C
+Provides:   %{name}-static-devel = %{version}-%{release}
+Obsoletes:  %{lib_name}-static-devel
 
-%description -n	%{staticdevelname}
+%description -n %{staticdevelname}
 %{common_description}
 
 This package contains the static libraries needed for developing
 programs using the %{name} library.
 
-%package -n	python-%{name}
-Summary:	Python bindings to %{common_summary}
-Group:		Development/Python
+%package -n python-%{name}
+Summary:    Python bindings to %{common_summary}
+Group:      Development/Python
 
-%description -n	python-%{name}
+%description -n python-%{name}
 %{common_description}
 
 This package contains the python bindings for the %{name} library.
 
-%package -n	%{name}-utils
-Summary:	Tools to %{common_summary}
-Group:		System/Kernel and hardware
-Requires:	bridge-utils
-Suggests:	dnsmasq-base
+%package -n %{name}-utils
+Summary:    Tools to %{common_summary}
+Group:      System/Kernel and hardware
+Requires:   bridge-utils
+Suggests:   dnsmasq-base
 
-%description -n	%{name}-utils
+%description -n %{name}-utils
 %{common_description}
 
 This package contains tools for the %{name} library.
