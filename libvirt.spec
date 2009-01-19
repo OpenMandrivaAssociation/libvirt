@@ -97,6 +97,7 @@ Group:      System/Kernel and hardware
 Requires:   bridge-utils
 Requires:   %{lib_name} = %{version}
 Suggests:   dnsmasq-base
+Suggests:	netcat-openbsd
 
 %description -n %{name}-utils
 %{common_description}
