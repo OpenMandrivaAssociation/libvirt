@@ -13,8 +13,8 @@ capabilities of recent versions of Linux.
 %define _disable_ld_as_needed 1
 
 Name:       libvirt
-Version:    0.5.1
-Release:    %mkrel 3
+Version:    0.6.0
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -177,11 +177,13 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
+%{_sysconfdir}/logrotate.d/libvirtd
 %{_libdir}/libvirt_proxy
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
 %{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
 %{_datadir}/augeas
+%{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
