@@ -36,6 +36,7 @@ BuildRequires:  hal-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
+BuildRequires:  libxml2-utils
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
