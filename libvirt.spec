@@ -13,13 +13,15 @@ capabilities of recent versions of Linux.
 %define _disable_ld_as_needed 1
 
 Name:       libvirt
-Version:    0.6.0
-Release:    %mkrel 2
+Version:    0.6.1
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Patch0:     libvirt-0.6.1-init-lsb-headers.patch
+
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 BuildRequires:  xen-devel >= 3.0.4
@@ -106,6 +108,7 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
+%patch0 -p1 -b .lsb
 
 %build
 %configure2_5x \
@@ -124,6 +127,9 @@ install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 # fix documentation
 mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
+
+%check
+make check
 
 %clean
 rm -rf %{buildroot}
