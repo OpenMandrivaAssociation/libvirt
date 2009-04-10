@@ -14,13 +14,12 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.6.1
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-Source1:    20libvirtd
 Patch0:     libvirt-0.6.1-init-lsb-headers.patch
 
 # Fedora patches, from upstream source repository
@@ -149,8 +148,6 @@ rm -rf %{buildroot}
 %makeinstall
 install -d -m 755 %{buildroot}%{_var}/run/%{name}
 install -d -m 755 %{buildroot}%{_var}/lib/%{name}
-install -d -m 755 %{buildroot}%{_libdir}/pm-utils/sleep.d
-install -m 755 %{SOURCE1} %{buildroot}%{_libdir}/pm-utils/sleep.d/
 %find_lang %{name}
 
 # fix documentation
@@ -215,7 +212,6 @@ rm -rf %{buildroot}
 %{_sysconfdir}/logrotate.d/libvirtd
 %{_libdir}/libvirt_proxy
 %{_libdir}/libvirt_parthelper
-%{_libdir}/pm-utils/sleep.d/20libvirtd
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
 %{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
