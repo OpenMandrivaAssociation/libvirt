@@ -13,28 +13,15 @@ capabilities of recent versions of Linux.
 %define _disable_ld_as_needed 1
 
 Name:       libvirt
-Version:    0.6.1
-Release:    %mkrel 3
+Version:    0.6.3
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:     libvirt-0.6.1-init-lsb-headers.patch
-
-# Fedora patches, from upstream source repository
-Patch101: libvirt-0.6.1-xend-lookup.patch
-Patch102: libvirt-0.6.1-xen-events.patch
-Patch103: libvirt-0.6.1-events-dispatch.patch
-Patch104: libvirt-0.6.1-fd-leaks.patch
-Patch105: libvirt-0.6.1-getvcpus-remote.patch
-Patch106: libvirt-0.6.1-pool-mode-parse.patch
-Patch107: libvirt-0.6.1-storage-free.patch
-Patch108: libvirt-0.6.1-vcpu-deadlock.patch
-Patch109: libvirt-0.6.1-xenblock-detach.patch
-Patch110: libvirt-0.6.1-fd-leaks2.patch
-Patch111: libvirt-0.6.1-svirt-shared-readonly.patch
-
+Patch1:     libvirt-0.6.3-format-security.patch
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 BuildRequires:  xen-devel >= 3.0.4
@@ -123,19 +110,7 @@ This package contains tools for the %{name} library.
 %prep
 %setup -q
 %patch0 -p1 -b .lsb
-
-%patch101 -p0
-%patch102 -p0
-%patch103 -p1
-%patch104 -p1
-%patch105 -p1
-%patch106 -p1
-%patch107 -p1
-%patch108 -p1
-%patch109 -p1
-%patch110 -p0
-%patch111 -p1
-
+%patch1 -p1 -b .format-sec
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
@@ -206,6 +181,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
+%{_mandir}/man1/virt-xml-validate.1*
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
