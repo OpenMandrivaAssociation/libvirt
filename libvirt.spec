@@ -14,7 +14,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.6.3
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -37,6 +37,9 @@ BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
 BuildRequires:  libxml2-utils
+BuildRequires:  libavahi-client-devel
+BuildRequires:  qemu
+BuildRequires:  gettext
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
@@ -115,7 +118,8 @@ This package contains tools for the %{name} library.
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
-    --with-xen-proxy
+    --with-xen-proxy \
+    --with-openvz
 %make
 
 %install
