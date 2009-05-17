@@ -10,11 +10,9 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define _requires_exceptions devel(libxenstore.*)
 
-%define _disable_ld_as_needed 1
-
 Name:       libvirt
 Version:    0.6.3
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -114,6 +112,7 @@ This package contains tools for the %{name} library.
 %setup -q
 %patch0 -p1 -b .lsb
 %patch1 -p1 -b .format-sec
+
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
@@ -124,7 +123,7 @@ This package contains tools for the %{name} library.
 
 %install
 rm -rf %{buildroot}
-%makeinstall
+%makeinstall_std
 install -d -m 755 %{buildroot}%{_var}/run/%{name}
 install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
