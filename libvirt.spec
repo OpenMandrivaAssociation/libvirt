@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.6.3
-Release:    %mkrel 4
+Release:    %mkrel 5
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -37,6 +37,7 @@ BuildRequires:  open-iscsi
 BuildRequires:  lvm2
 BuildRequires:  libxml2-utils
 BuildRequires:  libavahi-client-devel
+BuildRequires:  numa-devel
 BuildRequires:  qemu
 BuildRequires:  gettext
 BuildRoot: %{_tmppath}/%{name}-%{version}
