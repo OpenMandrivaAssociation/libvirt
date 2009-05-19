@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.6.3
-Release:    %mkrel 3
+Release:    %mkrel 4
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -20,6 +20,7 @@ Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:     libvirt-0.6.1-init-lsb-headers.patch
 Patch1:     libvirt-0.6.3-format-security.patch
+Patch2:     libvirt-0.6.3-fix-kvm-help.patch
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 BuildRequires:  xen-devel >= 3.0.4
@@ -112,6 +113,7 @@ This package contains tools for the %{name} library.
 %setup -q
 %patch0 -p1 -b .lsb
 %patch1 -p1 -b .format-sec
+%patch2 -p0 -b .kvm
 
 %build
 %configure2_5x \
