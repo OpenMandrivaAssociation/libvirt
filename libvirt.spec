@@ -32,6 +32,9 @@ Patch103: libvirt-0.6.3-refresh-qemu-caps.patch
 Patch104: libvirt-0.6.3-enable-qemu-0-10-migration.patch
 # Don't try to label a disk with no path (e.g. empty cdrom) (bz 499569)
 Patch105: libvirt-0.6.2-fix-nosource-label.patch
+# Debian patches
+Patch205: 0005-don-t-crash-with-def-NULL.patch
+Patch207: 0007-Declare-support-for-QEMU-migration-in-capabilities.patch
 
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
@@ -132,7 +135,8 @@ This package contains tools for the %{name} library.
 %patch102 -p1
 %patch103 -p1
 %patch104 -p1
-
+%patch205 -p1
+%patch207 -p1
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
