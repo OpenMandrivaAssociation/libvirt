@@ -52,7 +52,9 @@ BuildRequires:  open-iscsi
 BuildRequires:  lvm2
 BuildRequires:  libxml2-utils
 BuildRequires:  libavahi-client-devel
+%if %{mdkversion} >= 201000
 BuildRequires:  numa-devel
+%endif
 BuildRequires:  qemu
 BuildRequires:  gettext
 BuildRoot: %{_tmppath}/%{name}-%{version}
