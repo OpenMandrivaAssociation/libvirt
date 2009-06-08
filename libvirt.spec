@@ -11,30 +11,17 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.6.3
-Release:    %mkrel 6
+Version:    0.6.4
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-Patch0:     libvirt-0.6.1-init-lsb-headers.patch
-Patch1:     libvirt-0.6.3-format-security.patch
-Patch2:     libvirt-0.6.3-fix-kvm-help.patch
 
 # Fedora patches
 # Patches cherry-picked from upstream
 Patch101: libvirt-0.6.3-shared-readonly-label.patch
-Patch102: libvirt-0.6.3-hostdev-managed.patch
-# Refresh qemu caps when getCapabilities is called (bz 460649)
-Patch103: libvirt-0.6.3-refresh-qemu-caps.patch
-# Enable migration with qemu 0.10
-Patch104: libvirt-0.6.3-enable-qemu-0-10-migration.patch
-# Don't try to label a disk with no path (e.g. empty cdrom) (bz 499569)
-Patch105: libvirt-0.6.2-fix-nosource-label.patch
-# Debian patches
-Patch205: 0005-don-t-crash-with-def-NULL.patch
-Patch207: 0007-Declare-support-for-QEMU-migration-in-capabilities.patch
 
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
@@ -129,16 +116,7 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
-%patch0 -p1 -b .lsb
-%patch1 -p1 -b .format-sec
-%patch2 -p0 -b .kvm
-
 %patch101 -p1
-%patch102 -p1
-%patch103 -p1
-%patch104 -p1
-%patch205 -p1
-%patch207 -p1
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
