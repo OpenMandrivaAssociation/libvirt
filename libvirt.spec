@@ -12,13 +12,13 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.0
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-
+Patch0:     libvirt.git-e403f8d43e0f333575110c20557df3be24bcc2d3.patch
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 BuildRequires:  xen-devel >= 3.0.4
@@ -112,6 +112,8 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
+%patch0 -p1
+
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
