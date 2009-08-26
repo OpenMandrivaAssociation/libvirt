@@ -140,9 +140,9 @@ Summary:    Tools to %{common_summary}
 Group:      System/Kernel and hardware
 Requires:   bridge-utils
 Requires:   %{lib_name} = %{version}
-Requires:   polkit-agent
+Requires:   polkit
 Suggests:   dnsmasq-base
-Suggests:	netcat-openbsd
+Suggests:   netcat-openbsd
 
 %description -n %{name}-utils
 %{common_description}
