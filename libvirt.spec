@@ -12,13 +12,51 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.0
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:     libvirt.git-e403f8d43e0f333575110c20557df3be24bcc2d3.patch
+# Fedora patches
+# Make sure qemu can access kernel/initrd (bug #516034)
+Patch01: libvirt-0.7.0-chown-kernel-initrd-before-spawning-qemu.patch
+
+# Don't fail to start network if ipv6 modules is not loaded (bug #516497)
+Patch02: libvirt-0.7.0-handle-kernels-with-no-ipv6-support.patch
+
+# Policykit rewrite (rhbz #499970)
+# NB remove autoreconf hack & extra BRs when this goes away
+Patch03: libvirt-0.7.0-policy-kit-rewrite.patch
+
+# Log and ignore NUMA topology problems (rhbz #506590)
+Patch04: libvirt-0.7.0-numa-ignore-fail.patch
+
+# Minor 'virsh nodedev-list --tree' annoyance, fix from upstream
+Patch05: libvirt-add-space-to-nodedev-list-tree.patch
+
+# Fixes list corruption after disk hot-unplug
+Patch06: libvirt-fix-device-list-update-after-detach.patch
+
+# Re-attach PCI host devices after guest shuts down (rhbz #499561)
+Patch07: libvirt-reattach-pci-hostdevs-after-guest-shutdown.patch
+
+# Allow PM reset on multi-function PCI devices (rhbz #515689)
+Patch08: libvirt-allow-pm-reset-on-multi-function-pci-devices.patch
+
+# Fix stupid PCI reset error message (rhbz #499678)
+Patch09: libvirt-improve-pci-hostdev-reset-error-message.patch
+
+# Allow PCI bus reset to reset other devices (rhbz #499678)
+Patch10: libvirt-allow-pci-hostdev-reset-to-reset-other-devices.patch
+
+# Add PCI host device hotplug support
+Patch11: libvirt-add-pci-hostdev-hotplug-support.patch
+
+# Fix migration completion with newer versions of qemu (rhbs #516187)
+Patch12: libvirt-fix-migration-completion-with-newer-qemu.patch
+
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 BuildRequires:  xen-devel >= 3.0.4
@@ -28,7 +66,7 @@ BuildRequires:  readline-devel
 BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
-BuildRequires:  polkit-devel
+BuildRequires:  polkit-1-devel
 BuildRequires:  hal-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
@@ -39,7 +77,7 @@ BuildRequires:  libavahi-client-devel
 BuildRequires:  numa-devel
 %endif
 BuildRequires:  qemu
-BuildRequires:  gettext
+BuildRequires:  gettext-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
@@ -102,6 +140,7 @@ Summary:    Tools to %{common_summary}
 Group:      System/Kernel and hardware
 Requires:   bridge-utils
 Requires:   %{lib_name} = %{version}
+Requires:   polkit-agent
 Suggests:   dnsmasq-base
 Suggests:	netcat-openbsd
 
@@ -114,7 +153,24 @@ This package contains tools for the %{name} library.
 %setup -q
 %patch0 -p1
 
+%patch01 -p1
+%patch02 -p1
+%patch03 -p1
+%patch04 -p1
+%patch05 -p1
+%patch06 -p1
+%patch07 -p1
+%patch08 -p1
+%patch09 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+
+
 %build
+# Temp hack for patch 3
+autoreconf -if
+
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
@@ -196,7 +252,7 @@ rm -rf %{buildroot}
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
-%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
+%{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/augeas
 %{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/libvirt
