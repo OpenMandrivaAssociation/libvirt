@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.1
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -105,6 +105,8 @@ Requires:   %{lib_name} = %{version}
 Requires:   polkit
 Suggests:   dnsmasq-base
 Suggests:   netcat-openbsd
+Conflicts:  libvirt0 < 0.7.1-2
+Conflicts:  lib64virt0 < 0.7.1-2
 
 %description -n %{name}-utils
 %{common_description}
@@ -148,13 +150,8 @@ rm -rf %{buildroot}
 %postun -n %{lib_name} -p /sbin/ldconfig
 %endif
 
-%files -n %{lib_name} -f %{name}.lang
+%files -n %{lib_name}
 %defattr(-,root,root)
-%dir %{_docdir}/%{name}
-%{_docdir}/%{name}/ChangeLog
-%{_docdir}/%{name}/README
-%{_docdir}/%{name}/TODO
-%{_docdir}/%{name}/NEWS
 %{_libdir}/%{name}.so.%{lib_major}*
 
 %files -n %{develname}
@@ -183,8 +180,13 @@ rm -rf %{buildroot}
 %{py_platsitedir}/%{name}mod.la
 %{py_platsitedir}/%{name}mod.so
 
-%files -n %{name}-utils
+%files -n %{name}-utils -f %{name}.lang
 %defattr(-,root,root)
+%dir %{_docdir}/%{name}
+%{_docdir}/%{name}/ChangeLog
+%{_docdir}/%{name}/README
+%{_docdir}/%{name}/TODO
+%{_docdir}/%{name}/NEWS
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
