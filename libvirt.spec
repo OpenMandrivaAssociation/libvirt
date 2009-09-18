@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.1
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -28,7 +28,11 @@ BuildRequires:  readline-devel
 BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
+%if %{mdkversion} >= 201000
 BuildRequires:  polkit-1-devel
+%else
+BuildRequires:  polkit-devel
+%endif
 BuildRequires:  hal-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
@@ -198,7 +202,11 @@ rm -rf %{buildroot}
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
+%if %{mdkversion} >= 201000
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
+%else
+%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
+%endif
 %{_datadir}/augeas
 %{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/libvirt
