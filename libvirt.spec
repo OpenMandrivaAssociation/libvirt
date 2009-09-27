@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.1
-Release:    %mkrel 3
+Release:    %mkrel 4
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -21,7 +21,9 @@ Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
+%ifarch %{ix86} x86_64
 BuildRequires:  xen-devel >= 3.0.4
+%endif
 BuildRequires:  libxml2-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
@@ -70,7 +72,9 @@ linked with %{name}.
 Summary:    Development tools for programs using %{name}
 Group:      Development/C
 Requires:   %{lib_name} = %{version}
+%ifarch %{ix86} x86_64
 Requires:   xen-devel
+%endif
 Provides:   %{name}-devel = %{version}-%{release}
 Obsoletes:  %{lib_name}-devel
 
@@ -124,7 +128,11 @@ This package contains tools for the %{name} library.
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
-    --with-xen-proxy \
+%ifarch %{ix86} x86_64
+      --with-xen-proxy \
+%else
+      --with-xen=no \
+%endif
     --with-openvz
 %make
 
@@ -198,7 +206,9 @@ rm -rf %{buildroot}
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
 %{_sysconfdir}/logrotate.d/libvirtd
+%ifarch %{ix86} x86_64
 %{_libdir}/libvirt_proxy
+%endif
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
