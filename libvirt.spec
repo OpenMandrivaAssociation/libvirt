@@ -12,13 +12,29 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.1
-Release:    %mkrel 4
+Release:    %mkrel 5
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-
+# Fedora patches
+# A couple of hot-unplug memory handling fixes (#523953)
+Patch01: libvirt-fix-net-hotunplug-double-free.patch
+Patch02: libvirt-fix-pci-hostdev-hotunplug-leak.patch
+# Don't set a bogus error in virDrvSupportsFeature()
+Patch03: libvirt-fix-drv-supports-feature-bogus-error.patch
+# Fix raw save format
+Patch04: libvirt-fix-qemu-raw-format-save.patch
+# Fix USB device passthrough (#422683)
+Patch05: libvirt-fix-usb-device-passthrough.patch
+# Disable sound backend (#524499, #508317)
+Patch06: libvirt-disable-audio-backend.patch
+# Re-label qcow2 backing files (#497131)
+Patch07: libvirt-svirt-relabel-qcow2-backing-files.patch
+# Change logrotate config to weekly (#526769)
+Patch08: libvirt-change-logrotate-config-to-weekly.patch
+Patch09: libvirt-logrotate-create-lxc-uml-dirs.patch
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 %ifarch %{ix86} x86_64
@@ -124,7 +140,20 @@ This package contains tools for the %{name} library.
 %prep
 %setup -q
 
+%patch01 -p1
+%patch02 -p1
+%patch03 -p1
+%patch04 -p1
+%patch05 -p1
+%patch06 -p1
+%patch07 -p1
+%patch08 -p1
+%patch09 -p1
+
 %build
+# Needed for libvirt-logrotate-create-lxc-uml-dirs.patch
+automake
+
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
@@ -206,6 +235,9 @@ rm -rf %{buildroot}
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
 %{_sysconfdir}/logrotate.d/libvirtd
+%dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
+%dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
+%dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %ifarch %{ix86} x86_64
 %{_libdir}/libvirt_proxy
 %endif
