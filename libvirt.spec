@@ -11,18 +11,13 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.7.2
+Version:    0.7.4
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-# Fedora patches
-# Fix qemu machine types handling
-Patch01: libvirt-qemu-machine-type-fixes2.patch
-# Avoid compressing small log files (RH bug #531030)
-Patch02: libvirt-logrotate-avoid-compressing-small-logs.patch 
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 %ifarch %{ix86} x86_64
@@ -127,13 +122,8 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
-%patch01 -p1
-%patch02 -p1 
 
 %build
-# Needed for libvirt-logrotate-create-lxc-uml-dirs.patch
-automake
-
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
