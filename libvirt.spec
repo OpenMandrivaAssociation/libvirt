@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.4
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -39,7 +39,9 @@ BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
 BuildRequires:  libxml2-utils
+BuildRequires:  nfs-utils 
 BuildRequires:  libavahi-client-devel
+BuildRequires:  xmlrpc-c-devel
 %if %{mdkversion} >= 201000
 BuildRequires:  numa-devel
 %endif
@@ -126,13 +128,7 @@ This package contains tools for the %{name} library.
 %build
 %configure2_5x \
     --localstatedir=%{_var}  \
-    --with-html-subdir=%{name} \
-%ifarch %{ix86} x86_64
-      --with-xen-proxy \
-%else
-      --with-xen=no \
-%endif
-    --with-openvz
+    --with-html-subdir=%{name}
 %make
 
 %install
