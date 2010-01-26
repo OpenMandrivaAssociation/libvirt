@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.7.5
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -111,7 +111,11 @@ Summary:    Tools to %{common_summary}
 Group:      System/Kernel and hardware
 Requires:   bridge-utils
 Requires:   %{lib_name} = %{version}
+%if %{mdkversion} >= 201000
 Requires:   polkit
+%else
+Requires:   policykit
+%endif
 Suggests:   dnsmasq-base
 Suggests:   netcat-openbsd
 Conflicts:  libvirt0 < 0.7.1-2
