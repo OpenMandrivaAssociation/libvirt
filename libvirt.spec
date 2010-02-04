@@ -11,8 +11,8 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.7.5
-Release:    %mkrel 2
+Version:    0.7.6
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -187,7 +187,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc %{_docdir}/python-%{name}
 %{py_platsitedir}/%{name}.py
-%{py_platsitedir}/%{name}mod.a
 %{py_platsitedir}/%{name}mod.la
 %{py_platsitedir}/%{name}mod.so
 
