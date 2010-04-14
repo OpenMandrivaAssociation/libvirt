@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.7.7
+Version:    0.8.0
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
@@ -204,7 +204,7 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %{_sysconfdir}/sysconfig/libvirtd
-%{_sysconfdir}/logrotate.d/libvirtd
+%{_sysconfdir}/logrotate.d/libvirtd.*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
