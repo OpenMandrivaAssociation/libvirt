@@ -47,6 +47,7 @@ BuildRequires:  numa-devel
 %endif
 BuildRequires:  qemu
 BuildRequires:  gettext-devel
+BuildRequires:  libnl-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
