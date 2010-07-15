@@ -11,8 +11,8 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.8.0
-Release:    %mkrel 2
+Version:    0.8.2
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -219,4 +219,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
+%config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd.*
+%{_initrddir}/libvirt-guests
