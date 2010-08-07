@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.8.2
+Version:    0.8.3
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
@@ -165,6 +165,7 @@ rm -rf %{buildroot}
 %files -n %{lib_name}
 %defattr(-,root,root)
 %{_libdir}/%{name}.so.%{lib_major}*
+%{_libdir}/%{name}-qemu.so.%{lib_major}*
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -177,12 +178,15 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}.la
+%{_libdir}/%{name}-qemu.so
+%{_libdir}/%{name}-qemu.la
 %{_libdir}/libvirt_lxc
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n %{staticdevelname}
 %defattr(-,root,root)
 %{_libdir}/%{name}.a
+%{_libdir}/%{name}-qemu.a
 
 %files -n python-%{name}
 %defattr(-,root,root)
@@ -202,6 +206,7 @@ rm -rf %{buildroot}
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1.*
+%{_mandir}/man8/libvirtd.8.*
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
