@@ -11,15 +11,13 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.8.5
+Version:    0.8.6
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
-# fix xen support compilation
-Patch0:     0003-xen-work-with-ia64-MAX_VIRT_CPUS-of-64.patch
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 %ifarch %{ix86} x86_64
@@ -131,7 +129,6 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %configure2_5x \
