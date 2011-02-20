@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.8.7
+Version:    0.8.8
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
