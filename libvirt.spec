@@ -29,6 +29,7 @@ BuildRequires:  readline-devel
 BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
+BuildRequires:  libpciaccess-devel
 %if %{mdkversion} >= 201000
 BuildRequires:  polkit-1-devel
 %else
