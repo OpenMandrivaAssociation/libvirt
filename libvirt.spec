@@ -48,7 +48,11 @@ BuildRequires:  numa-devel
 BuildRequires:  qemu
 BuildRequires:  gettext-devel
 BuildRequires:  libnl-devel
+%if %{mdkversion} >= 201010
+BuildRequires:	netcf-devel
+%endif
 BuildRoot: %{_tmppath}/%{name}-%{version}
+Patch1:         libvirt-qemu-0.14-fix-booton.patch
 
 %description
 %{common_description}
@@ -129,6 +133,7 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 %configure2_5x \
