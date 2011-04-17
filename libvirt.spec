@@ -11,8 +11,8 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.8.8
-Release:    %mkrel 3
+Version:    0.9.0
+Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -52,7 +52,6 @@ BuildRequires:  libnl-devel
 BuildRequires:	netcf-devel
 %endif
 BuildRoot: %{_tmppath}/%{name}-%{version}
-Patch1:         libvirt-qemu-0.14-fix-booton.patch
 
 %description
 %{common_description}
@@ -133,7 +132,6 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 %configure2_5x \
@@ -220,6 +218,7 @@ rm -rf %{buildroot}
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libdir}/libvirt_parthelper
+%{_libdir}/libvirt_iohelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
 %if %{mdkversion} >= 201000
@@ -229,9 +228,10 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/augeas
 %{_datadir}/%{name}
+%{_datadir}/systemtap/tapsets/libvirtd.stp
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
-%config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd.*
+%config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %{_initrddir}/libvirt-guests
