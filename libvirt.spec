@@ -48,6 +48,8 @@ BuildRequires:  numa-devel
 BuildRequires:  qemu
 BuildRequires:  gettext-devel
 BuildRequires:  libnl-devel
+BuildRequires:  libpcap-devel
+BuildRequires:  systemtap
 %if %{mdkversion} >= 201010
 BuildRequires:	netcf-devel
 %endif
