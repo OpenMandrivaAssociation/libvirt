@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.9.0
+Version:    0.9.1
 Release:    %mkrel 1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
@@ -230,7 +230,7 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/augeas
 %{_datadir}/%{name}
-%{_datadir}/systemtap/tapsets/libvirtd.stp
+%{_datadir}/systemtap/tapset/libvirtd.stp
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
