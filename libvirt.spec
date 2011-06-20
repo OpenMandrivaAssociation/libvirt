@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.9.2
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -153,6 +153,10 @@ install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 # fix documentation
 mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
+
+%if "%{_lib}" == "lib64"
+perl -pi -e "s|-L/usr/lib\b|-L%{_libdir}|g" %{buildroot}%{_libdir}/*.la
+%endif
 
 %check
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
