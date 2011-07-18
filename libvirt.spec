@@ -38,6 +38,7 @@ BuildRequires:  polkit-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
+BuildRequires:  dmsetup
 BuildRequires:  libxml2-utils
 BuildRequires:  nfs-utils 
 BuildRequires:  libavahi-client-devel
@@ -224,6 +225,7 @@ rm -rf %{buildroot}
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libdir}/libvirt_iohelper
+%{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
 %if %{mdkversion} >= 201000
