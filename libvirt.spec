@@ -244,4 +244,4 @@ rm -rf %{buildroot}
 %{_initrddir}/libvirt-guests
 %{_libdir}/python2.6/site-packages/libvirt_qemu.py
 %{_libdir}/python2.6/site-packages/libvirtmod_qemu.la
-#%{_libdir}/python2.6/site-packages/libvirtmod_qemu.so
+%{_libdir}/python2.6/site-packages/libvirtmod_qemu.so
