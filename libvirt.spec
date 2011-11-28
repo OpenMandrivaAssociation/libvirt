@@ -155,9 +155,8 @@ install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
-%if "%{_lib}" == "lib64"
-perl -pi -e "s|-L/usr/lib\b|-L%{_libdir}|g" %{buildroot}%{_libdir}/*.la
-%endif
+rm -f %{buildroot}%{_libdir}/*.la
+rm -f %{buildroot}%{py_platsitedir}/*.la
 
 %check
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
@@ -166,13 +165,6 @@ perl -pi -e "s|-L/usr/lib\b|-L%{_libdir}|g" %{buildroot}%{_libdir}/*.la
 
 %clean
 rm -rf %{buildroot}
-
-%if %mdkversion < 200900
-%post -n %{lib_name} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{lib_name} -p /sbin/ldconfig
-%endif
 
 %files -n %{lib_name}
 %defattr(-,root,root)
@@ -189,9 +181,7 @@ rm -rf %{buildroot}
 %doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
-%{_libdir}/%{name}.la
 %{_libdir}/%{name}-qemu.so
-%{_libdir}/%{name}-qemu.la
 %{_libdir}/libvirt_lxc
 %{_libdir}/pkgconfig/%{name}.pc
 
@@ -204,7 +194,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc %{_docdir}/python-%{name}
 %{py_platsitedir}/%{name}.py
-%{py_platsitedir}/%{name}mod.la
 %{py_platsitedir}/%{name}mod.so
 
 %files -n %{name}-utils -f %{name}.lang
@@ -242,6 +231,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %{_initrddir}/libvirt-guests
-%{_libdir}/python2.6/site-packages/libvirt_qemu.py
-%{_libdir}/python2.6/site-packages/libvirtmod_qemu.la
-%{_libdir}/python2.6/site-packages/libvirtmod_qemu.so
+%{py_platsitedir}/libvirt_qemu.py
+%{py_platsitedir}/libvirtmod_qemu.so
+
