@@ -18,6 +18,7 @@ License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
 Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Patch0:		libvirt-0.9.7-undefined_fix.diff
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
 %ifarch %{ix86} x86_64
@@ -30,17 +31,13 @@ BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
 BuildRequires:  libpciaccess-devel
-%if %{mdkversion} >= 201000
-BuildRequires:  polkit-1-devel
-%else
 BuildRequires:  polkit-devel
-%endif
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
 BuildRequires:  dmsetup
 BuildRequires:  libxml2-utils
-BuildRequires:  nfs-utils 
+BuildRequires:  nfs-utils
 BuildRequires:  libavahi-client-devel
 BuildRequires:  xmlrpc-c-devel
 %if %{mdkversion} >= 201000
@@ -51,6 +48,7 @@ BuildRequires:  gettext-devel
 BuildRequires:  libnl-devel
 BuildRequires:  libpcap-devel
 BuildRequires:  systemtap
+BuildRequires:  autoconf automake libtool
 %if %{mdkversion} >= 201010
 BuildRequires:	netcf-devel
 %endif
@@ -135,8 +133,10 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
+%patch0 -p0
 
 %build
+autoreconf -fi
 %configure2_5x \
     --localstatedir=%{_var}  \
     --with-html-subdir=%{name} \
@@ -217,20 +217,17 @@ rm -rf %{buildroot}
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
-%if %{mdkversion} >= 201000
-%{_datadir}/polkit-1/actions/org.libvirt.unix.policy
-%else
 %{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
-%endif
 %{_datadir}/augeas
 %{_datadir}/%{name}
-%{_datadir}/systemtap/tapset/libvirtd.stp
+%{_datadir}/systemtap/tapset/libvirt_functions.stp
+%{_datadir}/systemtap/tapset/libvirt_probes.stp
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
+%config(noreplace) %{_sysconfdir}/sysctl.d/libvirtd
 %{_initrddir}/libvirt-guests
 %{py_platsitedir}/libvirt_qemu.py
 %{py_platsitedir}/libvirtmod_qemu.so
-
