@@ -170,6 +170,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_libdir}/%{name}.so.%{lib_major}*
 %{_libdir}/%{name}-qemu.so.%{lib_major}*
+%{_libdir}/libvirt_lxc
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -182,7 +183,6 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-qemu.so
-%{_libdir}/libvirt_lxc
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n %{staticdevelname}
