@@ -31,7 +31,7 @@ BuildRequires:  python-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  libsasl-devel
 BuildRequires:  libpciaccess-devel
-BuildRequires:  polkit-devel
+BuildRequires:  polkit-1-devel
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
