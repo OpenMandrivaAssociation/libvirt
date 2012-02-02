@@ -11,13 +11,13 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.9.7
-Release:    %mkrel 2
+Version:    0.9.9
+Release:    1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
 Url:        http://libvirt.org/
-Source:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Source0:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
 # XXX: for %%{_sysconfdir}/sasl2
 Requires:   cyrus-sasl
@@ -217,7 +217,7 @@ rm -rf %{buildroot}
 %{_libdir}/libvirt_parthelper
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
-%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
+%{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/augeas
 %{_datadir}/%{name}
 %{_datadir}/systemtap/tapset/libvirt_functions.stp
