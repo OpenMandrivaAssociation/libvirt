@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define _requires_exceptions devel(libxenstore.*)
 
 Name:       libvirt
-Version:    0.9.9
+Version:    0.9.11
 Release:    1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
@@ -208,6 +208,7 @@ rm -rf %{buildroot}
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1.*
 %{_mandir}/man8/libvirtd.8.*
+%{_mandir}/man1/virt-host-validate.1.*
 %{_sbindir}/*
 %{_initrddir}/libvirtd
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
