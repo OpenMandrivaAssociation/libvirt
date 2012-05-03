@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.9.11
-Release:    1
+Release:    2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -52,7 +52,6 @@ BuildRequires:  autoconf automake libtool
 %if %{mdkversion} >= 201010
 BuildRequires:	netcf-devel
 %endif
-BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
 %{common_description}
@@ -145,7 +144,6 @@ autoreconf -fi
 %make
 
 %install
-rm -rf %{buildroot}
 %makeinstall_std
 install -d -m 755 %{buildroot}%{_var}/run/%{name}
 install -d -m 755 %{buildroot}%{_var}/lib/%{name}
@@ -163,17 +161,12 @@ rm -f %{buildroot}%{py_platsitedir}/*.la
 # http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
 #make check
 
-%clean
-rm -rf %{buildroot}
-
 %files -n %{lib_name}
-%defattr(-,root,root)
 %{_libdir}/%{name}.so.%{lib_major}*
 %{_libdir}/%{name}-qemu.so.%{lib_major}*
 %{_libdir}/libvirt_lxc
 
 %files -n %{develname}
-%defattr(-,root,root)
 %{_docdir}/%{name}
 %exclude %{_docdir}/%{name}/ChangeLog
 %exclude %{_docdir}/%{name}/README
@@ -186,18 +179,15 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n %{staticdevelname}
-%defattr(-,root,root)
 %{_libdir}/%{name}.a
 %{_libdir}/%{name}-qemu.a
 
 %files -n python-%{name}
-%defattr(-,root,root)
 %doc %{_docdir}/python-%{name}
 %{py_platsitedir}/%{name}.py
 %{py_platsitedir}/%{name}mod.so
 
 %files -n %{name}-utils -f %{name}.lang
-%defattr(-,root,root)
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/ChangeLog
 %{_docdir}/%{name}/README
