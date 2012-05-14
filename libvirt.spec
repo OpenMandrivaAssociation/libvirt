@@ -8,11 +8,11 @@ capabilities of recent versions of Linux.
 %define staticdevelname %mklibname -d -s virt
 
 # libxenstore is not versionned properly
-%define _requires_exceptions devel(libxenstore.*)
+%define __noautoreq 'devel(libxenstore.*)'
 
 Name:       libvirt
-Version:    0.9.11
-Release:    2
+Version:    0.9.12
+Release:    1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
