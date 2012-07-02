@@ -11,7 +11,7 @@ capabilities of recent versions of Linux.
 %define __noautoreq 'devel(libxenstore.*)'
 
 Name:       libvirt
-Version:    0.9.12
+Version:    0.9.13
 Release:    1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
@@ -35,6 +35,7 @@ BuildRequires:  polkit-1-devel polkit
 BuildRequires:  parted-devel
 BuildRequires:  open-iscsi
 BuildRequires:  lvm2
+BuildRequires:  yajl-devel
 BuildRequires:  dmsetup
 BuildRequires:  libxml2-utils
 BuildRequires:  nfs-utils
@@ -213,6 +214,8 @@ rm -f %{buildroot}%{py_platsitedir}/*.la
 %{_datadir}/%{name}
 %{_datadir}/systemtap/tapset/libvirt_functions.stp
 %{_datadir}/systemtap/tapset/libvirt_probes.stp
+%{_datadir}/systemtap/tapset/libvirt_qemu_probes.stp
+
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
