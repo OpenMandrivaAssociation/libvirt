@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.9.13
-Release:    1
+Release:    2
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
