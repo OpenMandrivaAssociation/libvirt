@@ -12,7 +12,7 @@ capabilities of recent versions of Linux.
 
 Name:       libvirt
 Version:    0.9.13
-Release:    2
+Release:    3
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
@@ -156,6 +156,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 rm -f %{buildroot}%{_libdir}/*.la
 rm -f %{buildroot}%{py_platsitedir}/*.la
+rm -f %{buildroot}%{_libdir}/libvirt/connection-driver/*.a
 
 %check
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
@@ -207,6 +208,17 @@ rm -f %{buildroot}%{py_platsitedir}/*.la
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libdir}/libvirt_iohelper
 %{_libdir}/libvirt_parthelper
+%{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
