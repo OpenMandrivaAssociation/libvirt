@@ -11,8 +11,8 @@ capabilities of recent versions of Linux.
 %define __noautoreq 'devel(libxenstore.*)'
 
 Name:       libvirt
-Version:    0.9.13
-Release:    3
+Version:    0.10.2
+Release:    1
 Summary:    Toolkit to %{common_summary}
 License:    LGPLv2+
 Group:      System/Kernel and hardware
