@@ -1,0 +1,13 @@
+--- daemon/Makefile.am	2011-11-28 14:14:40.498345486 -0500
++++ daemon/Makefile.am.oden	2011-11-28 14:14:31.038346546 -0500
+@@ -156,6 +156,10 @@
+ if WITH_NWFILTER
+     libvirtd_LDADD += ../src/libvirt_driver_nwfilter.la
+ endif
++
++if HAVE_POLKIT0
++    libvirtd_LDADD += ../src/libvirt_driver_remote.la
++endif
+ endif
+ 
+ libvirtd_LDADD += ../src/libvirt.la
