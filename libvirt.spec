@@ -10,49 +10,45 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define __noautoreq 'devel(libxenstore.*)'
 
-Name:       libvirt
-Version:    0.10.2
-Release:    1
-Summary:    Toolkit to %{common_summary}
-License:    LGPLv2+
-Group:      System/Kernel and hardware
-Url:        http://libvirt.org/
-Source0:     http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Name:		libvirt
+Version:	1.0.0
+Release:	1
+Summary:	Toolkit to %{common_summary}
+License:	LGPLv2+
+Group:		System/Kernel and hardware
+Url:		http://libvirt.org/
+Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
 # XXX: for %%{_sysconfdir}/sasl2
-Requires:   cyrus-sasl
-%ifarch %{ix86} x86_64
-BuildRequires:  xen-devel >= 3.0.4
+Requires:	cyrus-sasl
+%ifarch %{ix86}	x86_64
+BuildRequires:	xen-devel >= 3.0.4
 %endif
-BuildRequires:  libxml2-devel
-BuildRequires:  ncurses-devel
-BuildRequires:  readline-devel
-BuildRequires:  python-devel
-BuildRequires:  gnutls-devel
-BuildRequires:  libsasl-devel
-BuildRequires:  libpciaccess-devel
-BuildRequires:  polkit-1-devel polkit
-BuildRequires:  parted-devel
-BuildRequires:  open-iscsi
-BuildRequires:  lvm2
-BuildRequires:  yajl-devel
-BuildRequires:  dmsetup
-BuildRequires:  libxml2-utils
-BuildRequires:  nfs-utils
-BuildRequires:  libavahi-client-devel
-BuildRequires:  xmlrpc-c-devel
-%if %{mdkversion} >= 201000
-BuildRequires:  numa-devel
-%endif
-BuildRequires:  qemu
-BuildRequires:  gettext-devel
-BuildRequires:  libnl-devel
-BuildRequires:  libpcap-devel
-BuildRequires:  systemtap
-BuildRequires:  autoconf automake libtool
-%if %{mdkversion} >= 201010
+BuildRequires:	pkgconfig(libxml-2.0)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	readline-devel
+BuildRequires:	python-devel
+BuildRequires:	pkgconfig(gnutls)
+BuildRequires:	libsasl-devel
+BuildRequires:	pkgconfig(pciaccess)
+BuildRequires:	pkgconfig(polkit-agent-1) polkit
+BuildRequires:	pkgconfig(libparted)
+BuildRequires:	open-iscsi
+BuildRequires:	lvm2
+BuildRequires:	pkgconfig(yajl)
+BuildRequires:	dmsetup
+BuildRequires:	libxml2-utils
+BuildRequires:	nfs-utils
+BuildRequires:	libavahi-client-devel
+BuildRequires:	pkgconfig(xmlrpc)
+BuildRequires:	numa-devel
+BuildRequires:	qemu
+BuildRequires:	gettext-devel
+BuildRequires:	pkgconfig(libnl-3.0)
+BuildRequires:	libpcap-devel
+BuildRequires:	systemtap
+BuildRequires:	autoconf automake libtool
 BuildRequires:	netcf-devel
-%endif
 
 %description
 %{common_description}
