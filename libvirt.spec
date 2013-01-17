@@ -1,54 +1,56 @@
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
-%define lib_major 0
 
-%define lib_name %mklibname virt %{lib_major}
-%define develname %mklibname -d virt
-%define staticdevelname %mklibname -d -s virt
+%define major	0
+%define libname	%mklibname virt %{major}
+%define devname	%mklibname -d virt
 
 # libxenstore is not versionned properly
 %define __noautoreq 'devel(libxenstore.*)'
 
-Name:		libvirt
-Version:	1.0.0
-Release:	1
 Summary:	Toolkit to %{common_summary}
+Name:		libvirt
+Version:	1.0.1
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
-# XXX: for %%{_sysconfdir}/sasl2
-Requires:	cyrus-sasl
+Patch1:		libvirt-1.0.1-work-around-broken-kernel-headers.patch
+
+BuildRequires:	dmsetup
+BuildRequires:	libxml2-utils
+BuildRequires:	lvm2
+BuildRequires:	glibc-devel
+BuildRequires:	kernel-desktop-devel
+BuildRequires:	nfs-utils
+BuildRequires:	open-iscsi
+BuildRequires:	qemu
+BuildRequires:	systemtap
+BuildRequires:	gettext-devel
+BuildRequires:	libsasl-devel
+BuildRequires:	numa-devel
+BuildRequires:	pcap-devel
+BuildRequires:	readline-devel
 %ifarch %{ix86}	x86_64
 BuildRequires:	xen-devel >= 3.0.4
 %endif
+BuildRequires:	pkgconfig(avahi-client)
+BuildRequires:	pkgconfig(gnutls)
+BuildRequires:	pkgconfig(libnl-3.0)
+BuildRequires:	pkgconfig(libparted)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(ncurses)
-BuildRequires:	readline-devel
-BuildRequires:	python-devel
-BuildRequires:	pkgconfig(gnutls)
-BuildRequires:	libsasl-devel
+BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
-BuildRequires:	pkgconfig(libparted)
-BuildRequires:	open-iscsi
-BuildRequires:	lvm2
-BuildRequires:	pkgconfig(yajl)
-BuildRequires:	dmsetup
-BuildRequires:	libxml2-utils
-BuildRequires:	nfs-utils
-BuildRequires:	libavahi-client-devel
+BuildRequires:	pkgconfig(python)
+BuildRequires:  pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
-BuildRequires:	numa-devel
-BuildRequires:	qemu
-BuildRequires:	gettext-devel
-BuildRequires:	pkgconfig(libnl-3.0)
-BuildRequires:	libpcap-devel
-BuildRequires:	systemtap
-BuildRequires:	autoconf automake libtool
-BuildRequires:	netcf-devel
+BuildRequires:	pkgconfig(yajl)
+Requires:	cyrus-sasl
 
 %description
 %{common_description}
@@ -60,43 +62,30 @@ Linux instance. The library aim at providing long term stable C API
 initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
-%package -n %{lib_name}
+%package -n %{libname}
 Summary:    A library to %{common_summary}
 Group:      System/Libraries
 
-%description -n %{lib_name}
+%description -n %{libname}
 %{common_description}
 
 This package contains the library needed to run programs dynamically
 linked with %{name}.
 
-%package -n %{develname}
+%package -n %{devname}
 Summary:    Development tools for programs using %{name}
 Group:      Development/C
-Requires:   %{lib_name} = %{version}
+Requires:   %{libname} = %{version}
 %ifarch %{ix86} x86_64
 Requires:   xen-devel
 %endif
 Provides:   %{name}-devel = %{version}-%{release}
-Obsoletes:  %{lib_name}-devel
 
-%description -n %{develname}
+%description -n %{devname}
 %{common_description}
 
 This package contains the header files and libraries needed for
 developing programs using the %{name} library.
-
-%package -n %{staticdevelname}
-Summary:    Development static libraries for programs using %{name}
-Group:      Development/C
-Provides:   %{name}-static-devel = %{version}-%{release}
-Obsoletes:  %{lib_name}-static-devel
-
-%description -n %{staticdevelname}
-%{common_description}
-
-This package contains the static libraries needed for developing
-programs using the %{name} library.
 
 %package -n python-%{name}
 Summary:    Python bindings to %{common_summary}
@@ -111,16 +100,9 @@ This package contains the python bindings for the %{name} library.
 Summary:    Tools to %{common_summary}
 Group:      System/Kernel and hardware
 Requires:   bridge-utils
-Requires:   %{lib_name} = %{version}
-%if %{mdkversion} >= 201000
 Requires:   polkit
-%else
-Requires:   policykit
-%endif
 Suggests:   dnsmasq-base
 Suggests:   netcat-openbsd
-Conflicts:  libvirt0 < 0.7.1-2
-Conflicts:  lib64virt0 < 0.7.1-2
 
 %description -n %{name}-utils
 %{common_description}
@@ -129,15 +111,18 @@ This package contains tools for the %{name} library.
 
 %prep
 %setup -q
-%patch0 -p0
+%apply_patches
 
 %build
 autoreconf -fi
 %configure2_5x \
-    --localstatedir=%{_var}  \
-    --with-html-subdir=%{name} \
-    --with-udev \
-    --without-hal
+	--disable-static \
+	--localstatedir=%{_var}  \
+	--with-html-subdir=%{name} \
+	--with-udev \
+	--with-init_script=systemd \
+	--without-hal
+
 %make
 
 %install
@@ -150,21 +135,17 @@ install -d -m 755 %{buildroot}%{_var}/lib/%{name}
 mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
-rm -f %{buildroot}%{_libdir}/*.la
-rm -f %{buildroot}%{py_platsitedir}/*.la
-rm -f %{buildroot}%{_libdir}/libvirt/connection-driver/*.a
-
 %check
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
 # http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
 #make check
 
-%files -n %{lib_name}
-%{_libdir}/%{name}.so.%{lib_major}*
-%{_libdir}/%{name}-qemu.so.%{lib_major}*
+%files -n %{libname}
+%{_libdir}/%{name}.so.%{major}*
+%{_libdir}/%{name}-qemu.so.%{major}*
 %{_libdir}/libvirt_lxc
 
-%files -n %{develname}
+%files -n %{devname}
 %{_docdir}/%{name}
 %exclude %{_docdir}/%{name}/ChangeLog
 %exclude %{_docdir}/%{name}/README
@@ -175,10 +156,6 @@ rm -f %{buildroot}%{_libdir}/libvirt/connection-driver/*.a
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/pkgconfig/%{name}.pc
-
-%files -n %{staticdevelname}
-%{_libdir}/%{name}.a
-%{_libdir}/%{name}-qemu.a
 
 %files -n python-%{name}
 %doc %{_docdir}/python-%{name}
@@ -233,3 +210,4 @@ rm -f %{buildroot}%{_libdir}/libvirt/connection-driver/*.a
 %{_initrddir}/libvirt-guests
 %{py_platsitedir}/libvirt_qemu.py
 %{py_platsitedir}/libvirtmod_qemu.so
+
