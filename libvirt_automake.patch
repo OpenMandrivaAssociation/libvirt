@@ -1,0 +1,11 @@
+--- libvirt-1.0.2/daemon/Makefile.am.orig	2013-02-22 19:37:54.341224526 +0000
++++ libvirt-1.0.2/daemon/Makefile.am	2013-02-22 19:38:33.561226664 +0000
+@@ -178,7 +178,7 @@
+     libvirtd_LDADD += ../src/libvirt_driver_nwfilter.la
+ endif
+ 
+-if HAVE_POLKIT0
++if WITH_POLKIT0
+     libvirtd_LDADD += ../src/libvirt_driver_remote.la
+ endif
+ endif

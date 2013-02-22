@@ -11,14 +11,14 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.0.1
+Version:	1.0.2
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
-Patch1:		libvirt-1.0.1_xdr_uint64_t.patch
+Patch1:		libvirt_automake.patch
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
