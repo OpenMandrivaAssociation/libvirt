@@ -1,9 +1,13 @@
+%define	_disable_ld_no_undefined 1
+
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
 
 %define major	0
 %define libname	%mklibname virt %{major}
+%define libqemu	%mklibname virt-qemu %{major}
+%define liblxc	%mklibname virt-lxc %{major}
 %define devname	%mklibname -d virt
 
 # libxenstore is not versionned properly
@@ -19,6 +23,7 @@ Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
 Patch1:		libvirt_automake.patch
+Patch2:		libvirt-1.0.2_xdr_uint64_t.patch
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
@@ -37,9 +42,13 @@ BuildRequires:	readline-devel
 BuildRequires:	xen-devel >= 3.0.4
 %endif
 BuildRequires:	pkgconfig(avahi-client)
+BuildRequires:	pkgconfig(blkid)
+BuildRequires:	pkgconfig(fuse)
 BuildRequires:	pkgconfig(gnutls)
+BuildRequires:	pkgconfig(libcurl)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libparted)
+BuildRequires:	pkgconfig(libssh2)
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(ncurses)
@@ -67,8 +76,23 @@ Summary:	A library to %{common_summary}
 Group:		System/Libraries
 
 %description -n %{libname}
-%{common_description}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
 
+%package -n %{libqemu}
+Summary:	A library to %{common_summary}
+Group:		System/Libraries
+Conflicts:	%{_lib}virt0 < 1.0.2-1
+
+%description -n %{libqemu}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
+
+%package -n %{liblxc}
+Summary:	A library to %{common_summary}
+Group:		System/Libraries
+
+%description -n %{liblxc}
 This package contains the library needed to run programs dynamically
 linked with %{name}.
 
@@ -76,6 +100,8 @@ linked with %{name}.
 Summary:	Development tools for programs using %{name}
 Group:		Development/C
 Requires:	%{libname} = %{version}
+Requires:	%{libqemu} = %{version}
+Requires:	%{liblxc} = %{version}
 %ifarch %{ix86} x86_64
 Requires:	xen-devel
 %endif
@@ -139,7 +165,12 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 %files -n %{libname}
 %{_libdir}/%{name}.so.%{major}*
+
+%files -n %{libqemu}
 %{_libdir}/%{name}-qemu.so.%{major}*
+
+%files -n %{liblxc}
+%{_libdir}/%{name}-lxc.so.%{major}*
 
 %files -n %{devname}
 %{_docdir}/%{name}
@@ -151,6 +182,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-qemu.so
+%{_libdir}/%{name}-lxc.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n python-%{name}
@@ -204,7 +237,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
-%config(noreplace) %{_sysconfdir}/sysctl.d/libvirtd
+%config(noreplace) %{_prefix}/lib/sysctl.d/libvirtd.conf
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virtlockd.*
