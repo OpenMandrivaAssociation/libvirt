@@ -1,14 +1,14 @@
-%define	_disable_ld_no_undefined 1
+%define _disable_ld_no_undefined 1
 
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
 
-%define major	0
-%define libname	%mklibname virt %{major}
-%define libqemu	%mklibname virt-qemu %{major}
-%define liblxc	%mklibname virt-lxc %{major}
-%define devname	%mklibname -d virt
+%define major 0
+%define libname %mklibname virt %{major}
+%define libqemu %mklibname virt-qemu %{major}
+%define liblxc %mklibname virt-lxc %{major}
+%define devname %mklibname -d virt
 
 # libxenstore is not versionned properly
 %define __noautoreq 'devel(libxenstore.*)'
@@ -16,7 +16,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	1.0.2
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -56,7 +56,7 @@ BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
 BuildRequires:	pkgconfig(python)
-BuildRequires:  pkgconfig(systemd)
+BuildRequires: 	pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
