@@ -23,7 +23,7 @@ Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Patch0:		libvirt-0.9.7-undefined_fix.diff
 Patch1:		libvirt_automake.patch
-#Patch2:		libvirt-1.0.2_xdr_uint64_t.patch
+Patch2:		libvirt-1.0.4_xdr_uint64_t.patch
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
