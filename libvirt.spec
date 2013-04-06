@@ -34,7 +34,7 @@ BuildRequires:	open-iscsi
 BuildRequires:	qemu
 BuildRequires:	systemtap
 BuildRequires:	gettext-devel
-BuildRequires:	libsasl-devel
+BuildRequires:	sasl-devel
 BuildRequires:	numa-devel
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
