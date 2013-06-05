@@ -1,0 +1,26 @@
+From fe981074371b9fb3e1bcda59a1d3fae8fe1a88b0 Mon Sep 17 00:00:00 2001
+Message-Id: <fe981074371b9fb3e1bcda59a1d3fae8fe1a88b0.1339163744.git.agx@sigxcpu.org>
+From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Mon, 4 Jun 2012 16:18:52 +0200
+Subject: [PATCH] Set udevadm settle timeout to 3 seconds
+
+---
+ src/util/virutil.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/util/virutil.c b/src/util/virutil.c
+index 48358b2..1e71a4a 100644
+--- a/src/util/virutil.c
++++ b/src/util/virutil.c
+@@ -3039,7 +3039,7 @@ virFileFindMountPoint(const char *type ATTRIBUTE_UNUSED)
+ void virFileWaitForDevices(void)
+ {
+ # ifdef UDEVADM
+-    const char *const settleprog[] = { UDEVADM, "settle", NULL };
++    const char *const settleprog[] = { UDEVADM, "settle", "--timeout=3", NULL };
+ # else
+     const char *const settleprog[] = { UDEVSETTLE, NULL };
+ # endif
+-- 
+1.7.10
+

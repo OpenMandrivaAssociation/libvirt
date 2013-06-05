@@ -15,15 +15,16 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.0.4
+Version:	1.0.6
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
-Patch0:		libvirt-0.9.7-undefined_fix.diff
-Patch1:		libvirt_automake.patch
-Patch2:		libvirt-1.0.4_xdr_uint64_t.patch
+Source1:	%{name}-tmpfiles.conf
+Patch1:		libvirt-fix-capabilities-check.patch
+Patch4:		0002-Set-udevadm-settle-timeout-to-3-seconds.patch
+Patch5:		0001-Disable-virnettlscontexttest.patch
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
@@ -151,17 +152,37 @@ autoreconf -fi
 	--with-init_script=systemd \
 	--without-hal
 
-%make
+%make LIBS="-ltirpc"
 
 %install
-%makeinstall_std
-install -d -m 755 %{buildroot}%{_var}/run/%{name}
-install -d -m 755 %{buildroot}%{_var}/lib/%{name}
+%makeinstall_std SYSTEMD_UNIT_DIR=%{_unitdir}
+
+rm -f %{buildroot}%{_initrddir}/libvirt-guests
+find %{buildroot} -name '*.la' -delete
+
+install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
 # fix documentation
 mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
+
+%check
+# fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
+# http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
+#make check
+
+%post -n %{name}-utils
+%_tmpfilescreate %{name}
+%_post_service  libvirtd
+%_post_service  libvirt-guests
+%_post_service	virtlockd
+
+%preun -n %{name}-utils
+%_preun_service libvirt-guests
+%_preun_service libvirtd
+%_preun_service	virtlockd
 
 %files -n %{libname}
 %{_libdir}/%{name}.so.%{major}*
@@ -240,5 +261,6 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_prefix}/lib/sysctl.d/libvirtd.conf
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
+%{_tmpfilesdir}/%{name}.conf
 %{_unitdir}/virtlockd.*
 
