@@ -34,7 +34,7 @@ BuildRequires:	glibc-devel
 BuildRequires:	nfs-utils
 BuildRequires:	open-iscsi
 BuildRequires:	qemu
-BuildRequires:	systemtap
+BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
 BuildRequires:	numa-devel
