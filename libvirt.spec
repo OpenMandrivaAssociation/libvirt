@@ -15,7 +15,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.0.6
+Version:	1.1.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -62,6 +62,13 @@ BuildRequires: 	pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
+
+%track
+prog %name = {
+	url = http://libvirt.org/sources/
+	version = %version
+	regex = %name-(__VER__)\.tar\.gz
+}
 
 %description
 %{common_description}
@@ -175,7 +182,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 #make check
 
 %post -n %{name}-utils
-%_tmpfilescreate %{name}
+#_tmpfilescreate %{name}
 %_post_service  libvirtd
 %_post_service  libvirt-guests
 %_post_service	virtlockd
@@ -242,10 +249,12 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/lock-driver/lockd.so
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
+%{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/augeas
 %{_datadir}/%{name}
