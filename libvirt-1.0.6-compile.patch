@@ -1,0 +1,14 @@
+--- libvirt-1.0.6/src/remote/remote_protocol.c.omv~	2013-07-05 22:07:39.995120887 +0200
++++ libvirt-1.0.6/src/remote/remote_protocol.c	2013-07-05 22:10:06.997435439 +0200
+@@ -8,9 +8,8 @@
+ #include <libvirt/libvirt.h>
+ #include "internal.h"
+ #include <arpa/inet.h>
+-#ifdef HAVE_XDR_U_INT64_T
+-# define xdr_uint64_t xdr_u_int64_t
+-#endif
++#include <tirpc/rpc/xdr.h>
++#define xdr_u_int64_t xdr_uint64_t
+ #ifndef IXDR_PUT_INT32
+ # define IXDR_PUT_INT32 IXDR_PUT_LONG
+ #endif

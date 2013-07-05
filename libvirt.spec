@@ -25,6 +25,7 @@ Source1:	%{name}-tmpfiles.conf
 Patch1:		libvirt-fix-capabilities-check.patch
 Patch4:		0002-Set-udevadm-settle-timeout-to-3-seconds.patch
 Patch5:		0001-Disable-virnettlscontexttest.patch
+Patch10:	libvirt-1.0.6-compile.patch
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
