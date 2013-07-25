@@ -37,7 +37,9 @@ BuildRequires:	qemu
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
+%ifnarch %arm $mips aarch64
 BuildRequires:	numa-devel
+%endif
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
 %ifarch %{ix86}	x86_64
