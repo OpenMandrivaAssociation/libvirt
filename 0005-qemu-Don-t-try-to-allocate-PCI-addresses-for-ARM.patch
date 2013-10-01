@@ -1,0 +1,43 @@
+From c8e47add2fe77905523f6112ceb6b844337f6d3f Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Fri, 30 Aug 2013 12:41:33 -0400
+Subject: [PATCH] qemu: Don't try to allocate PCI addresses for ARM
+
+---
+ src/qemu/qemu_command.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
+index a8e532c..87345c7 100644
+--- a/src/qemu/qemu_command.c
++++ b/src/qemu/qemu_command.c
+@@ -1773,6 +1773,16 @@ cleanup:
+     return ret;
+ }
+ 
++static bool
++qemuDomainSupportsPCI(virDomainDefPtr def) {
++    if (def->os.arch != VIR_ARCH_ARMV7L)
++        return true;
++
++    if (STREQ(def->os.machine, "versatilepb"))
++        return true;
++
++    return false;
++}
+ 
+ int
+ qemuDomainAssignPCIAddresses(virDomainDefPtr def,
+@@ -1838,8 +1848,10 @@ qemuDomainAssignPCIAddresses(virDomainDefPtr def,
+         if (!(addrs = qemuDomainPCIAddressSetCreate(def, nbuses, false)))
+             goto cleanup;
+ 
+-        if (qemuAssignDevicePCISlots(def, qemuCaps, addrs) < 0)
+-            goto cleanup;
++        if (qemuDomainSupportsPCI(def)) {
++            if (qemuAssignDevicePCISlots(def, qemuCaps, addrs) < 0)
++                goto cleanup;
++        }
+     }
+ 
+     if (obj && obj->privateData) {

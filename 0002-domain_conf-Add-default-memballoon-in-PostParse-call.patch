@@ -1,0 +1,77 @@
+From 1bab38008dbfb16329e73b419fd9871e6f15990c Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Fri, 30 Aug 2013 12:41:30 -0400
+Subject: [PATCH] domain_conf: Add default memballoon in PostParse callbacks
+
+This should be a no-op change for now.
+---
+ src/conf/domain_conf.c | 13 -------------
+ src/qemu/qemu_domain.c | 10 ++++++++++
+ src/xen/xen_driver.c   |  9 +++++++++
+ 3 files changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/src/conf/domain_conf.c b/src/conf/domain_conf.c
+index f8fbf79..fafbb89 100644
+--- a/src/conf/domain_conf.c
++++ b/src/conf/domain_conf.c
+@@ -12184,19 +12184,6 @@ virDomainDefParseXML(xmlDocPtr xml,
+ 
+         def->memballoon = memballoon;
+         VIR_FREE(nodes);
+-    } else {
+-        if (def->virtType == VIR_DOMAIN_VIRT_XEN ||
+-            def->virtType == VIR_DOMAIN_VIRT_QEMU ||
+-            def->virtType == VIR_DOMAIN_VIRT_KQEMU ||
+-            def->virtType == VIR_DOMAIN_VIRT_KVM) {
+-            virDomainMemballoonDefPtr memballoon;
+-            if (VIR_ALLOC(memballoon) < 0)
+-                goto error;
+-            memballoon->model = def->virtType == VIR_DOMAIN_VIRT_XEN ?
+-                VIR_DOMAIN_MEMBALLOON_MODEL_XEN :
+-                VIR_DOMAIN_MEMBALLOON_MODEL_VIRTIO;
+-            def->memballoon = memballoon;
+-        }
+     }
+ 
+     /* Parse the RNG device */
+diff --git a/src/qemu/qemu_domain.c b/src/qemu/qemu_domain.c
+index 7f4d17d..9260301 100644
+--- a/src/qemu/qemu_domain.c
++++ b/src/qemu/qemu_domain.c
+@@ -784,6 +784,16 @@ qemuDomainDefPostParse(virDomainDefPtr def,
+         return -1;
+         }
+     }
++
++    if (!def->memballoon) {
++        virDomainMemballoonDefPtr memballoon;
++        if (VIR_ALLOC(memballoon) < 0)
++            return -1;
++
++        memballoon->model = VIR_DOMAIN_MEMBALLOON_MODEL_VIRTIO;
++        def->memballoon = memballoon;
++    }
++
+     return 0;
+ }
+ 
+diff --git a/src/xen/xen_driver.c b/src/xen/xen_driver.c
+index cb64de6..6cb4f4f 100644
+--- a/src/xen/xen_driver.c
++++ b/src/xen/xen_driver.c
+@@ -340,6 +340,15 @@ xenDomainDeviceDefPostParse(virDomainDeviceDefPtr dev,
+         STRNEQ(def->os.type, "hvm"))
+         dev->data.chr->targetType = VIR_DOMAIN_CHR_CONSOLE_TARGET_TYPE_XEN;
+ 
++    if (!def->memballoon) {
++        virDomainMemballoonDefPtr memballoon;
++        if (VIR_ALLOC(memballoon) < 0)
++            return -1;
++
++        memballoon->model = VIR_DOMAIN_MEMBALLOON_MODEL_XEN;
++        def->memballoon = memballoon;
++    }
++
+     return 0;
+ }
+ 

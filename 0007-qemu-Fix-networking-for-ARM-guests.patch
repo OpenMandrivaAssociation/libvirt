@@ -1,0 +1,206 @@
+From b09ab6961b8dd60691839f0b1a5f259925819425 Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Fri, 30 Aug 2013 12:41:35 -0400
+Subject: [PATCH] qemu: Fix networking for ARM guests
+
+Similar to the chardev bit, ARM boards depend on the old style '-net nic'
+for actually instantiating net devices. But we can't block out
+-netdev altogether since it's needed for upcoming virtio support.
+
+And add tests for working ARM XML with console, disk, and networking.
+---
+ src/qemu/qemu_command.c                            | 34 ++++++++++++++++------
+ src/qemu/qemu_domain.c                             | 20 +++++++++++--
+ .../qemuxml2argv-arm-vexpressa9-basic.args         |  8 +++++
+ .../qemuxml2argv-arm-vexpressa9-basic.xml          | 34 ++++++++++++++++++++++
+ tests/qemuxml2argvtest.c                           |  3 ++
+ 5 files changed, 88 insertions(+), 11 deletions(-)
+ create mode 100644 tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.args
+ create mode 100644 tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.xml
+
+diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
+index 6733709..787381b 100644
+--- a/src/qemu/qemu_command.c
++++ b/src/qemu/qemu_command.c
+@@ -417,6 +417,26 @@ cleanup:
+     return ret;
+ }
+ 
++static bool
++qemuDomainSupportsNicdev(virDomainDefPtr def, virQEMUCapsPtr qemuCaps)
++{
++    if (!virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))
++        return false;
++
++    /* arm boards require legacy -net nic */
++    if (def->os.arch == VIR_ARCH_ARMV7L)
++        return false;
++
++    return true;
++}
++
++static bool
++qemuDomainSupportsNetdev(virDomainDefPtr def, virQEMUCapsPtr qemuCaps)
++{
++    if (!qemuDomainSupportsNicdev(def, qemuCaps))
++        return false;
++    return virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV);
++}
+ 
+ /**
+  * qemuOpenVhostNet:
+@@ -454,8 +474,7 @@ qemuOpenVhostNet(virDomainDefPtr def,
+      * option), don't try to open the device.
+      */
+     if (!(virQEMUCapsGet(qemuCaps, QEMU_CAPS_VHOST_NET) &&
+-          virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV) &&
+-          virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))) {
++          qemuDomainSupportsNetdev(def, qemuCaps))) {
+         if (net->driver.virtio.name == VIR_DOMAIN_NET_BACKEND_TYPE_VHOST) {
+             virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
+                            "%s", _("vhost-net is not supported with "
+@@ -7312,8 +7331,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+      *
+      * NB, no support for -netdev without use of -device
+      */
+-    if (virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV) &&
+-        virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE)) {
++    if (qemuDomainSupportsNetdev(def, qemuCaps)) {
+         if (!(host = qemuBuildHostNetStr(net, driver,
+                                          ',', vlan,
+                                          tapfdName, tapfdSize,
+@@ -7321,7 +7339,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+             goto cleanup;
+         virCommandAddArgList(cmd, "-netdev", host, NULL);
+     }
+-    if (virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE)) {
++    if (qemuDomainSupportsNicdev(def, qemuCaps)) {
+         bool multiqueue = tapfdSize > 1 || vhostfdSize > 1;
+ 
+         if (!(nic = qemuBuildNicDevStr(def, net, vlan, bootindex,
+@@ -7333,8 +7351,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+             goto cleanup;
+         virCommandAddArgList(cmd, "-net", nic, NULL);
+     }
+-    if (!(virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV) &&
+-          virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))) {
++    if (!qemuDomainSupportsNetdev(def, qemuCaps)) {
+         if (!(host = qemuBuildHostNetStr(net, driver,
+                                          ',', vlan,
+                                          tapfdName, tapfdSize,
+@@ -8385,8 +8402,7 @@ qemuBuildCommandLine(virConnectPtr conn,
+             int vlan;
+ 
+             /* VLANs are not used with -netdev, so don't record them */
+-            if (virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV) &&
+-                virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))
++            if (qemuDomainSupportsNetdev(def, qemuCaps))
+                 vlan = -1;
+             else
+                 vlan = i;
+diff --git a/src/qemu/qemu_domain.c b/src/qemu/qemu_domain.c
+index cff6d70..30588fb 100644
+--- a/src/qemu/qemu_domain.c
++++ b/src/qemu/qemu_domain.c
+@@ -799,6 +799,23 @@ qemuDomainDefPostParse(virDomainDefPtr def,
+     return 0;
+ }
+ 
++static const char *
++qemuDomainDefaultNetModel(virDomainDefPtr def) {
++    if (def->os.arch == VIR_ARCH_S390 ||
++        def->os.arch == VIR_ARCH_S390X)
++        return "virtio";
++
++    if (def->os.arch == VIR_ARCH_ARMV7L) {
++        if (STREQ(def->os.machine, "versatilepb"))
++            return "smc91c111";
++
++        /* Incomplete. vexpress (and a few others) use this, but not all
++         * arm boards */
++        return "lan9118";
++    }
++
++    return "rtl8139";
++}
+ 
+ static int
+ qemuDomainDeviceDefPostParse(virDomainDeviceDefPtr dev,
+@@ -814,8 +831,7 @@ qemuDomainDeviceDefPostParse(virDomainDeviceDefPtr dev,
+         dev->data.net->type != VIR_DOMAIN_NET_TYPE_HOSTDEV &&
+         !dev->data.net->model) {
+         if (VIR_STRDUP(dev->data.net->model,
+-                       def->os.arch == VIR_ARCH_S390 ||
+-                       def->os.arch == VIR_ARCH_S390X ? "virtio" : "rtl8139") < 0)
++                       qemuDomainDefaultNetModel(def)) < 0)
+             goto cleanup;
+     }
+ 
+diff --git a/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.args b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.args
+new file mode 100644
+index 0000000..a23fde4
+--- /dev/null
++++ b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.args
+@@ -0,0 +1,8 @@
++LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test QEMU_AUDIO_DRV=none \
++/usr/bin/qemu-system-arm -S -M vexpress-a9 -m 1024 -smp 1 -nographic \
++-nodefconfig -nodefaults -monitor unix:/tmp/test-monitor,server,nowait \
++-boot c -kernel /arm.kernel -initrd /arm.initrd -append \
++'console=ttyAMA0,115200n8 rw root=/dev/mmcblk0p3 rootwait physmap.enabled=0' \
++-dtb /arm.dtb -usb -drive file=/arm.raw,if=sd,index=0 \
++-net nic,macaddr=52:54:00:09:a4:37,vlan=0,model=lan9118,name=net0 \
++-net user,vlan=0,name=hostnet0 -serial pty
+diff --git a/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.xml b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.xml
+new file mode 100644
+index 0000000..ec9374f
+--- /dev/null
++++ b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-basic.xml
+@@ -0,0 +1,34 @@
++<domain type="qemu">
++  <name>armtest</name>
++  <uuid>496d7ea8-9739-544b-4ebd-ef08be936e6a</uuid>
++  <memory>1048576</memory>
++  <currentMemory>1048576</currentMemory>
++  <vcpu>1</vcpu>
++  <os>
++    <type arch="armv7l" machine="vexpress-a9">hvm</type>
++    <kernel>/arm.kernel</kernel>
++    <initrd>/arm.initrd</initrd>
++    <dtb>/arm.dtb</dtb>
++    <cmdline>console=ttyAMA0,115200n8 rw root=/dev/mmcblk0p3 rootwait physmap.enabled=0</cmdline>
++  </os>
++  <features>
++    <acpi/>
++    <apic/>
++    <pae/>
++  </features>
++  <clock offset="utc"/>
++  <on_poweroff>destroy</on_poweroff>
++  <on_reboot>restart</on_reboot>
++  <on_crash>restart</on_crash>
++  <devices>
++    <emulator>/usr/bin/qemu-system-arm</emulator>
++    <disk type='file' device='disk'>
++      <source file='/arm.raw'/>
++      <target dev='sda' bus='sd'/>
++    </disk>
++    <interface type='user'>
++      <mac address='52:54:00:09:a4:37'/>
++    </interface>
++    <console type='pty'/>
++  </devices>
++</domain>
+diff --git a/tests/qemuxml2argvtest.c b/tests/qemuxml2argvtest.c
+index cb6106f..6ecabbf 100644
+--- a/tests/qemuxml2argvtest.c
++++ b/tests/qemuxml2argvtest.c
+@@ -1059,6 +1059,9 @@ mymain(void)
+ 
+     DO_TEST("arm-vexpressa9-nodevs",
+             QEMU_CAPS_DEVICE, QEMU_CAPS_NODEFCONFIG, QEMU_CAPS_DTB);
++    DO_TEST("arm-vexpressa9-basic",
++            QEMU_CAPS_DEVICE, QEMU_CAPS_NODEFCONFIG, QEMU_CAPS_DTB,
++            QEMU_CAPS_DRIVE);
+ 
+     virObjectUnref(driver.config);
+     virObjectUnref(driver.caps);

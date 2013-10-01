@@ -15,17 +15,44 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.1.0
+Version:	1.1.2
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
-Patch1:		libvirt-fix-capabilities-check.patch
-Patch4:		0002-Set-udevadm-settle-timeout-to-3-seconds.patch
-Patch5:		0001-Disable-virnettlscontexttest.patch
-Patch10:	libvirt-1.0.6-compile.patch
+
+# Fix launching ARM guests on x86 (patches posted upstream, F20 feature)
+Patch0001:	0001-qemu-Set-QEMU_AUDIO_DRV-none-with-nographic.patch
+Patch0002:	0002-domain_conf-Add-default-memballoon-in-PostParse-call.patch
+Patch0003:	0003-qemu-Don-t-add-default-memballoon-device-on-ARM.patch
+Patch0004:	0004-qemu-Fix-specifying-char-devs-for-ARM.patch
+Patch0005:	0005-qemu-Don-t-try-to-allocate-PCI-addresses-for-ARM.patch
+Patch0006:	0006-domain_conf-Add-disk-bus-sd-wire-it-up-for-qemu.patch
+Patch0007:	0007-qemu-Fix-networking-for-ARM-guests.patch
+Patch0008:	0008-qemu-Support-virtio-mmio-transport-for-virtio-on-ARM.patch
+
+# Sync with v1.1.2-maint
+Patch0101:	0101-virFileNBDDeviceAssociate-Avoid-use-of-uninitialized.patch
+Patch0102:	0102-Fix-AM_LDFLAGS-typo.patch
+Patch0103:	0103-Pass-AM_LDFLAGS-to-driver-modules-too.patch
+Patch0104:	0104-build-fix-build-with-latest-rawhide-kernel-headers.patch
+Patch0105:	0105-Also-store-user-group-ID-values-in-virIdentity.patch
+Patch0106:	0106-Ensure-system-identity-includes-process-start-time.patch
+Patch0107:	0107-Add-support-for-using-3-arg-pkcheck-syntax-for-proce.patch
+Patch0108:	0108-Fix-crash-in-remoteDispatchDomainMemoryStats-CVE-201.patch
+Patch0109:	0109-virsh-add-missing-async-option-in-opts_block_commit.patch
+Patch0110:	0110-Fix-typo-in-identity-code-which-is-pre-requisite-for.patch
+Patch0111:	0111-Add-a-virNetSocketNewConnectSockFD-method.patch
+Patch0112:	0112-Add-test-case-for-virNetServerClient-object-identity.patch
+
+# Fix snapshot restore when VM has disabled usb support (bz #1011520)
+Patch0201:	0201-qemu-Fix-checking-of-ABI-stability-when-restoring-ex.patch
+Patch0202:	0202-qemu-Use-migratable-XML-definition-when-doing-extern.patch
+
+Patch203:	rpcgen-libvirt-1.1.2.patch
+
 
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
@@ -33,7 +60,7 @@ BuildRequires:	lvm2
 BuildRequires:	glibc-devel
 BuildRequires:	nfs-utils
 BuildRequires:	open-iscsi
-BuildRequires:	qemu
+#BuildRequires:	qemu
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
@@ -175,7 +202,7 @@ install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
 # fix documentation
-mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
+#mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 %check
@@ -218,7 +245,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n python-%{name}
-%doc %{_docdir}/python-%{name}
+#% doc %{_docdir}/python-%{name}
 %{py_platsitedir}/%{name}*.py
 %{py_platsitedir}/%{name}mod*.so
 
@@ -234,6 +261,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_mandir}/man1/virt-pki-validate.1.*
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
+%{_mandir}/man1/virt-login-shell.1.*
+%{_mandir}/man8/virtlockd.8.xz
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/

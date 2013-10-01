@@ -1,0 +1,305 @@
+From 7e1b75ca5d4127a86ff1eaa0dfe37b485eeb0a7a Mon Sep 17 00:00:00 2001
+From: "Daniel P. Berrange" <berrange@redhat.com>
+Date: Mon, 23 Sep 2013 12:46:27 +0100
+Subject: [PATCH] Add test case for virNetServerClient object identity code
+
+Start a test case for the virNetServerClient object, which
+initially checks the creation of a virIdentityPtr object.
+
+Signed-off-by: Daniel P. Berrange <berrange@redhat.com>
+---
+ cfg.mk                         |   2 +-
+ tests/Makefile.am              |  14 +++-
+ tests/virnetserverclientmock.c |  64 +++++++++++++++++
+ tests/virnetserverclienttest.c | 159 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 237 insertions(+), 2 deletions(-)
+ create mode 100644 tests/virnetserverclientmock.c
+ create mode 100644 tests/virnetserverclienttest.c
+
+diff --git a/cfg.mk b/cfg.mk
+index 9a9616c..7f817ef 100644
+--- a/cfg.mk
++++ b/cfg.mk
+@@ -939,7 +939,7 @@ exclude_file_name_regexp--sc_prohibit_asprintf = \
+   ^(bootstrap.conf$$|src/util/virstring\.[ch]$$|examples/domain-events/events-c/event-test\.c$$|tests/vircgroupmock\.c$$)
+ 
+ exclude_file_name_regexp--sc_prohibit_strdup = \
+-  ^(docs/|examples/|python/|src/util/virstring\.c$$)
++  ^(docs/|examples/|python/|src/util/virstring\.c|tests/virnetserverclientmock.c$$)
+ 
+ exclude_file_name_regexp--sc_prohibit_close = \
+   (\.p[yl]$$|^docs/|^(src/util/virfile\.c|src/libvirt\.c|tests/vircgroupmock\.c)$$)
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index c800179..ae99b38 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -114,7 +114,7 @@ test_programs = virshtest sockettest \
+ 	nodeinfotest virbuftest \
+ 	commandtest seclabeltest \
+ 	virhashtest virnetmessagetest virnetsockettest \
+-	viratomictest \
++	viratomictest virnetserverclienttest \
+ 	utiltest shunloadtest \
+ 	virtimetest viruritest virkeyfiletest \
+ 	virauthconfigtest \
+@@ -281,6 +281,7 @@ EXTRA_DIST += $(test_scripts)
+ 
+ test_libraries = libshunload.la \
+ 		libvirportallocatormock.la \
++		virnetserverclientmock.la \
+ 		vircgroupmock.la \
+ 		$(NULL)
+ if WITH_QEMU
+@@ -611,6 +612,17 @@ virnetsockettest_SOURCES = \
+ 	virnetsockettest.c testutils.h testutils.c
+ virnetsockettest_LDADD = $(LDADDS)
+ 
++virnetserverclienttest_SOURCES = \
++	virnetserverclienttest.c \
++	testutils.h testutils.c
++virnetserverclienttest_LDADD = $(LDADDS)
++
++virnetserverclientmock_la_SOURCES = \
++	virnetserverclientmock.c
++virnetserverclientmock_la_CFLAGS = $(AM_CFLAGS)
++virnetserverclientmock_la_LDFLAGS = -module -avoid-version \
++        -rpath /evil/libtool/hack/to/force/shared/lib/creation
++
+ if WITH_GNUTLS
+ virnettlscontexttest_SOURCES = \
+ 	virnettlscontexttest.c \
+diff --git a/tests/virnetserverclientmock.c b/tests/virnetserverclientmock.c
+new file mode 100644
+index 0000000..caef1e3
+--- /dev/null
++++ b/tests/virnetserverclientmock.c
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (C) 2013 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library.  If not, see
++ * <http://www.gnu.org/licenses/>.
++ *
++ * Author: Daniel P. Berrange <berrange@redhat.com>
++ */
++
++#include <config.h>
++
++#include "rpc/virnetsocket.h"
++#include "virutil.h"
++#include "internal.h"
++
++int virEventAddTimeout(int frequency ATTRIBUTE_UNUSED,
++                       virEventTimeoutCallback cb ATTRIBUTE_UNUSED,
++                       void *opaque ATTRIBUTE_UNUSED,
++                       virFreeCallback ff ATTRIBUTE_UNUSED)
++{
++    return 0;
++}
++
++int virNetSocketGetUNIXIdentity(virNetSocketPtr sock ATTRIBUTE_UNUSED,
++                                uid_t *uid,
++                                gid_t *gid,
++                                pid_t *pid,
++                                unsigned long long *timestamp)
++{
++    *uid = 666;
++    *gid = 7337;
++    *pid = 42;
++    *timestamp = 12345678;
++    return 0;
++}
++
++char *virGetUserName(uid_t uid ATTRIBUTE_UNUSED)
++{
++    return strdup("astrochicken");
++}
++
++char *virGetGroupName(gid_t gid ATTRIBUTE_UNUSED)
++{
++    return strdup("fictionalusers");
++}
++
++int virNetSocketGetSELinuxContext(virNetSocketPtr sock ATTRIBUTE_UNUSED,
++                                  char **context)
++{
++    if (!(*context = strdup("foo_u:bar_r:wizz_t:s0-s0:c0.c1023")))
++        return -1;
++    return 0;
++}
+diff --git a/tests/virnetserverclienttest.c b/tests/virnetserverclienttest.c
+new file mode 100644
+index 0000000..1ddff3e
+--- /dev/null
++++ b/tests/virnetserverclienttest.c
+@@ -0,0 +1,159 @@
++/*
++ * Copyright (C) 2013 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library.  If not, see
++ * <http://www.gnu.org/licenses/>.
++ *
++ * Author: Daniel P. Berrange <berrange@redhat.com>
++ */
++
++#include <config.h>
++
++#include "testutils.h"
++#include "virerror.h"
++#include "rpc/virnetserverclient.h"
++
++#define VIR_FROM_THIS VIR_FROM_RPC
++
++#ifdef HAVE_SOCKETPAIR
++static int testIdentity(const void *opaque ATTRIBUTE_UNUSED)
++{
++    int sv[2];
++    int ret = -1;
++    virNetSocketPtr sock = NULL;
++    virNetServerClientPtr client = NULL;
++    virIdentityPtr ident = NULL;
++    const char *gotUsername = NULL;
++    const char *gotUserID = NULL;
++    const char *gotGroupname = NULL;
++    const char *gotGroupID = NULL;
++    const char *gotSELinuxContext = NULL;
++
++    if (socketpair(PF_UNIX, SOCK_STREAM, 0, sv) < 0) {
++        virReportSystemError(errno, "%s",
++                             "Cannot create socket pair");
++        return -1;
++    }
++
++    if (virNetSocketNewConnectSockFD(sv[0], &sock) < 0) {
++        virDispatchError(NULL);
++        goto cleanup;
++    }
++    sv[0] = -1;
++
++    if (!(client = virNetServerClientNew(sock, 0, false, 1,
++# ifdef WITH_GNUTLS
++                                         NULL,
++# endif
++                                         NULL, NULL, NULL, NULL))) {
++        virDispatchError(NULL);
++        goto cleanup;
++    }
++
++    if (!(ident = virNetServerClientGetIdentity(client))) {
++        fprintf(stderr, "Failed to create identity\n");
++        goto cleanup;
++    }
++
++    if (virIdentityGetAttr(ident,
++                           VIR_IDENTITY_ATTR_UNIX_USER_NAME,
++                           &gotUsername) < 0) {
++        fprintf(stderr, "Missing username in identity\n");
++        goto cleanup;
++    }
++    if (STRNEQ_NULLABLE("astrochicken", gotUsername)) {
++        fprintf(stderr, "Want username 'astrochicken' got '%s'\n",
++                NULLSTR(gotUsername));
++        goto cleanup;
++    }
++
++    if (virIdentityGetAttr(ident,
++                           VIR_IDENTITY_ATTR_UNIX_USER_ID,
++                           &gotUserID) < 0) {
++        fprintf(stderr, "Missing user ID in identity\n");
++        goto cleanup;
++    }
++    if (STRNEQ_NULLABLE("666", gotUserID)) {
++        fprintf(stderr, "Want username '666' got '%s'\n",
++                NULLSTR(gotUserID));
++        goto cleanup;
++    }
++
++    if (virIdentityGetAttr(ident,
++                           VIR_IDENTITY_ATTR_UNIX_GROUP_NAME,
++                           &gotGroupname) < 0) {
++        fprintf(stderr, "Missing groupname in identity\n");
++        goto cleanup;
++    }
++    if (STRNEQ_NULLABLE("fictionalusers", gotGroupname)) {
++        fprintf(stderr, "Want groupname 'fictionalusers' got '%s'\n",
++                NULLSTR(gotGroupname));
++        goto cleanup;
++    }
++
++    if (virIdentityGetAttr(ident,
++                           VIR_IDENTITY_ATTR_UNIX_GROUP_ID,
++                           &gotGroupID) < 0) {
++        fprintf(stderr, "Missing group ID in identity\n");
++        goto cleanup;
++    }
++    if (STRNEQ_NULLABLE("7337", gotGroupID)) {
++        fprintf(stderr, "Want groupname '7337' got '%s'\n",
++                NULLSTR(gotGroupID));
++        goto cleanup;
++    }
++
++    if (virIdentityGetAttr(ident,
++                           VIR_IDENTITY_ATTR_SELINUX_CONTEXT,
++                           &gotSELinuxContext) < 0) {
++        fprintf(stderr, "Missing SELinux context in identity\n");
++        goto cleanup;
++    }
++    if (STRNEQ_NULLABLE("foo_u:bar_r:wizz_t:s0-s0:c0.c1023", gotSELinuxContext)) {
++        fprintf(stderr, "Want groupname 'foo_u:bar_r:wizz_t:s0-s0:c0.c1023' got '%s'\n",
++                NULLSTR(gotGroupID));
++        goto cleanup;
++    }
++
++    ret = 0;
++ cleanup:
++    virObjectUnref(sock);
++    virObjectUnref(client);
++    virObjectUnref(ident);
++    VIR_FORCE_CLOSE(sv[0]);
++    VIR_FORCE_CLOSE(sv[1]);
++    return ret;
++}
++
++
++static int
++mymain(void)
++{
++    int ret = 0;
++
++
++    if (virtTestRun("Identity", 1,
++                    testIdentity, NULL) < 0)
++        ret = -1;
++
++    return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
++}
++#else
++static int
++mymain(void)
++{
++    return AM_TEST_SKIP;
++}
++#endif
++VIRT_TEST_MAIN_PRELOAD(mymain, abs_builddir "/.libs/virnetserverclientmock.so")

@@ -1,4 +1,5 @@
 removed_sources:
   libvirt-1.0.6.tar.gz: 0e669826ce5782d77935f09caa72e17f642a00a9
-sources:
   libvirt-1.1.0.tar.gz: 8a0409f6ffe2975456dc6ed4b5c0c54adfdcd44a
+sources:
+  libvirt-1.1.2.tar.gz: 1d6ba882fda91d7f78232007e8dffc736206ff34

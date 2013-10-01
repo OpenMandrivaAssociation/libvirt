@@ -1,0 +1,38 @@
+From b4e1fb2febb00173b1489634262169554e8f6a1d Mon Sep 17 00:00:00 2001
+From: "Daniel P. Berrange" <berrange@redhat.com>
+Date: Mon, 23 Sep 2013 12:46:25 +0100
+Subject: [PATCH] Fix typo in identity code which is pre-requisite for
+ CVE-2013-4311
+
+The fix for CVE-2013-4311 had a pre-requisite enhancement
+to the identity code
+
+  commit db7a5688c05f3fd60d9d2b74c72427eb9ee9c176
+  Author: Daniel P. Berrange <berrange@redhat.com>
+  Date:   Thu Aug 22 16:00:01 2013 +0100
+
+    Also store user & group ID values in virIdentity
+
+This had a typo which caused the group ID to overwrite the
+user ID string. This meant any checks using this would have
+the wrong ID value. This only affected the ACL code, not the
+initial polkit auth. It also leaked memory.
+
+Signed-off-by: Daniel P. Berrange <berrange@redhat.com>
+---
+ src/rpc/virnetserverclient.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rpc/virnetserverclient.c b/src/rpc/virnetserverclient.c
+index 19c4100..0b9ab52 100644
+--- a/src/rpc/virnetserverclient.c
++++ b/src/rpc/virnetserverclient.c
+@@ -678,7 +678,7 @@ virNetServerClientCreateIdentity(virNetServerClientPtr client)
+             goto cleanup;
+         if (!(groupname = virGetGroupName(gid)))
+             goto cleanup;
+-        if (virAsprintf(&userid, "%d", (int)gid) < 0)
++        if (virAsprintf(&groupid, "%d", (int)gid) < 0)
+             goto cleanup;
+         if (virAsprintf(&processid, "%llu",
+                         (unsigned long long)pid) < 0)

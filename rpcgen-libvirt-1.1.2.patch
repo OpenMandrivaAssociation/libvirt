@@ -1,0 +1,12 @@
+diff --git a/src/lxc/lxc_monitor_protocol.h b/src/lxc/lxc_monitor_protocol.h
+index dd7b311..02d314a 100644
+--- a/src/lxc/lxc_monitor_protocol.h
++++ b/src/lxc/lxc_monitor_protocol.h
+@@ -5,6 +5,7 @@
+ 
+ #ifndef _LXC_MONITOR_PROTOCOL_H_RPCGEN
+ #define _LXC_MONITOR_PROTOCOL_H_RPCGEN
++#define xdr_uint64_t xdr_u_int64_t
+ 
+ #include <rpc/rpc.h>
+ 

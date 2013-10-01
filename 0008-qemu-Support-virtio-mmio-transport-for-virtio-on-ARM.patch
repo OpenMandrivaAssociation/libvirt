@@ -1,0 +1,448 @@
+From cddd76962c2a0fcbb8c80240d234b7d0d657324d Mon Sep 17 00:00:00 2001
+From: Cole Robinson <crobinso@redhat.com>
+Date: Fri, 30 Aug 2013 12:41:36 -0400
+Subject: [PATCH] qemu: Support virtio-mmio transport for virtio on ARM
+
+Starting with qemu 1.6, the qemu-system-arm vexpress-a9 model has a
+hardcoded virtio-mmio transport which enables attaching all virtio
+devices.
+
+On the command line, we have to use virtio-XXX-device rather than
+virtio-XXX-pci, thankfully s390 already set the precedent here so
+it's fairly straight forward.
+
+At the XML level, this adds a new device address type virtio-mmio.
+The controller and addressing don't have any subelements at the
+moment because we they aren't needed for this usecase, but could
+be added later if needed.
+
+Add a test case for an ARM guest with one of every virtio device
+enabled.
+---
+ src/conf/domain_conf.c                             | 12 +++-
+ src/conf/domain_conf.h                             |  1 +
+ src/qemu/qemu_capabilities.c                       | 17 ++++--
+ src/qemu/qemu_capabilities.h                       |  2 +
+ src/qemu/qemu_command.c                            | 65 +++++++++++++++++-----
+ .../qemuxml2argv-arm-vexpressa9-virtio.args        | 14 +++++
+ .../qemuxml2argv-arm-vexpressa9-virtio.xml         | 45 +++++++++++++++
+ tests/qemuxml2argvtest.c                           |  4 ++
+ 8 files changed, 139 insertions(+), 21 deletions(-)
+ create mode 100644 tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.args
+ create mode 100644 tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.xml
+
+diff --git a/src/conf/domain_conf.c b/src/conf/domain_conf.c
+index 2c62a2d..3b51ae8 100644
+--- a/src/conf/domain_conf.c
++++ b/src/conf/domain_conf.c
+@@ -210,7 +210,8 @@ VIR_ENUM_IMPL(virDomainDeviceAddress, VIR_DOMAIN_DEVICE_ADDRESS_TYPE_LAST,
+               "usb",
+               "spapr-vio",
+               "virtio-s390",
+-              "ccw")
++              "ccw",
++              "virtio-mmio")
+ 
+ VIR_ENUM_IMPL(virDomainDisk, VIR_DOMAIN_DISK_TYPE_LAST,
+               "block",
+@@ -2390,6 +2391,7 @@ int virDomainDeviceAddressIsValid(virDomainDeviceInfoPtr info,
+         return 1;
+ 
+     case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390:
++    case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO:
+         return 1;
+ 
+     case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW:
+@@ -3031,6 +3033,9 @@ virDomainDeviceInfoFormat(virBufferPtr buf,
+                           info->addr.ccw.devno);
+         break;
+ 
++    case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO:
++        break;
++
+     default:
+         virReportError(VIR_ERR_INTERNAL_ERROR,
+                        _("unknown address type '%d'"), info->type);
+@@ -3495,6 +3500,9 @@ virDomainDeviceInfoParseXML(xmlNodePtr node,
+             goto cleanup;
+         break;
+ 
++    case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO:
++        break;
++
+     default:
+         /* Should not happen */
+         virReportError(VIR_ERR_INTERNAL_ERROR,
+@@ -5827,6 +5835,7 @@ virDomainControllerDefParseXML(xmlNodePtr node,
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_SPAPRVIO &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390 &&
++        def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_PCI) {
+         virReportError(VIR_ERR_INTERNAL_ERROR, "%s",
+                        _("Controllers must use the 'pci' address type"));
+@@ -6387,6 +6396,7 @@ virDomainNetDefParseXML(virDomainXMLOptionPtr xmlopt,
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_SPAPRVIO &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390 &&
++        def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO &&
+         def->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_PCI) {
+         virReportError(VIR_ERR_INTERNAL_ERROR, "%s",
+                        _("Network interfaces must use 'pci' address type"));
+diff --git a/src/conf/domain_conf.h b/src/conf/domain_conf.h
+index 380e2bb..1d70eba 100644
+--- a/src/conf/domain_conf.h
++++ b/src/conf/domain_conf.h
+@@ -207,6 +207,7 @@ enum virDomainDeviceAddressType {
+     VIR_DOMAIN_DEVICE_ADDRESS_TYPE_SPAPRVIO,
+     VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390,
+     VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW,
++    VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO,
+ 
+     VIR_DOMAIN_DEVICE_ADDRESS_TYPE_LAST
+ };
+diff --git a/src/qemu/qemu_capabilities.c b/src/qemu/qemu_capabilities.c
+index 72df793..a0f7773 100644
+--- a/src/qemu/qemu_capabilities.c
++++ b/src/qemu/qemu_capabilities.c
+@@ -237,6 +237,8 @@ VIR_ENUM_IMPL(virQEMUCaps, QEMU_CAPS_LAST,
+               "dmi-to-pci-bridge",
+               "i440fx-pci-hole64-size",
+               "q35-pci-hole64-size",
++
++              "virtio-mmio", /* 155 */
+     );
+ 
+ struct _virQEMUCaps {
+@@ -1385,6 +1387,7 @@ struct virQEMUCapsStringFlags virQEMUCapsObjectTypes[] = {
+     { "vfio-pci", QEMU_CAPS_DEVICE_VFIO_PCI },
+     { "scsi-generic", QEMU_CAPS_DEVICE_SCSI_GENERIC },
+     { "i82801b11-bridge", QEMU_CAPS_DEVICE_DMI_TO_PCI_BRIDGE },
++    { "virtio-mmio", QEMU_CAPS_DEVICE_VIRTIO_MMIO },
+ };
+ 
+ static struct virQEMUCapsStringFlags virQEMUCapsObjectPropsVirtioBlk[] = {
+@@ -2831,17 +2834,19 @@ virQEMUCapsUsedQMP(virQEMUCapsPtr qemuCaps)
+ bool
+ virQEMUCapsSupportsChardev(virDomainDefPtr def,
+                            virQEMUCapsPtr qemuCaps,
+-                           virDomainChrDefPtr chr ATTRIBUTE_UNUSED)
++                           virDomainChrDefPtr chr)
+ {
+     if (!virQEMUCapsGet(qemuCaps, QEMU_CAPS_CHARDEV) ||
+         !virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))
+         return false;
+ 
+-    /* This may not be true for all ARM machine types, but at least
+-     * the only supported serial devices of vexpress and versatile
+-     * don't have the -chardev property wired up. */
+     if (def->os.arch != VIR_ARCH_ARMV7L)
+-        return false;
++        return true;
+ 
+-    return true;
++    /* This may not be true for all ARM machine types, but at least
++     * the only supported non-virtio serial devices of vexpress and versatile
++     * don't have the -chardev property wired up. */
++    return (chr->info.type == VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO ||
++            (chr->deviceType == VIR_DOMAIN_CHR_DEVICE_TYPE_CONSOLE &&
++             chr->targetType == VIR_DOMAIN_CHR_CONSOLE_TARGET_TYPE_VIRTIO));
+ }
+diff --git a/src/qemu/qemu_capabilities.h b/src/qemu/qemu_capabilities.h
+index 5180ee9..e000ce5 100644
+--- a/src/qemu/qemu_capabilities.h
++++ b/src/qemu/qemu_capabilities.h
+@@ -194,6 +194,8 @@ enum virQEMUCapsFlags {
+     QEMU_CAPS_I440FX_PCI_HOLE64_SIZE = 153, /* i440FX-pcihost.pci-hole64-size */
+     QEMU_CAPS_Q35_PCI_HOLE64_SIZE = 154, /* q35-pcihost.pci-hole64-size */
+ 
++    QEMU_CAPS_DEVICE_VIRTIO_MMIO = 155, /* -device virtio-mmio */
++
+     QEMU_CAPS_LAST,                   /* this must always be the last item */
+ };
+ 
+diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
+index 787381b..efbfc97 100644
+--- a/src/qemu/qemu_command.c
++++ b/src/qemu/qemu_command.c
+@@ -418,22 +418,27 @@ cleanup:
+ }
+ 
+ static bool
+-qemuDomainSupportsNicdev(virDomainDefPtr def, virQEMUCapsPtr qemuCaps)
++qemuDomainSupportsNicdev(virDomainDefPtr def,
++                         virQEMUCapsPtr qemuCaps,
++                         virDomainNetDefPtr net)
+ {
+     if (!virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE))
+         return false;
+ 
+-    /* arm boards require legacy -net nic */
+-    if (def->os.arch == VIR_ARCH_ARMV7L)
++    /* non-virtio ARM nics require legacy -net nic */
++    if (def->os.arch == VIR_ARCH_ARMV7L &&
++        net->info.type != VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO)
+         return false;
+ 
+     return true;
+ }
+ 
+ static bool
+-qemuDomainSupportsNetdev(virDomainDefPtr def, virQEMUCapsPtr qemuCaps)
++qemuDomainSupportsNetdev(virDomainDefPtr def,
++                         virQEMUCapsPtr qemuCaps,
++                         virDomainNetDefPtr net)
+ {
+-    if (!qemuDomainSupportsNicdev(def, qemuCaps))
++    if (!qemuDomainSupportsNicdev(def, qemuCaps, net))
+         return false;
+     return virQEMUCapsGet(qemuCaps, QEMU_CAPS_NETDEV);
+ }
+@@ -474,7 +479,7 @@ qemuOpenVhostNet(virDomainDefPtr def,
+      * option), don't try to open the device.
+      */
+     if (!(virQEMUCapsGet(qemuCaps, QEMU_CAPS_VHOST_NET) &&
+-          qemuDomainSupportsNetdev(def, qemuCaps))) {
++          qemuDomainSupportsNetdev(def, qemuCaps, net))) {
+         if (net->driver.virtio.name == VIR_DOMAIN_NET_BACKEND_TYPE_VHOST) {
+             virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
+                            "%s", _("vhost-net is not supported with "
+@@ -1154,8 +1159,8 @@ cleanup:
+ }
+ 
+ static void
+-qemuDomainPrimeS390VirtioDevices(virDomainDefPtr def,
+-                                 enum virDomainDeviceAddressType type)
++qemuDomainPrimeVirtioDeviceAddresses(virDomainDefPtr def,
++                                     enum virDomainDeviceAddressType type)
+ {
+     /*
+        declare address-less virtio devices to be of address type 'type'
+@@ -1289,7 +1294,7 @@ qemuDomainAssignS390Addresses(virDomainDefPtr def,
+ 
+     if (STREQLEN(def->os.machine, "s390-ccw", 8) &&
+         virQEMUCapsGet(qemuCaps, QEMU_CAPS_VIRTIO_CCW)) {
+-        qemuDomainPrimeS390VirtioDevices(
++        qemuDomainPrimeVirtioDeviceAddresses(
+             def, VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW);
+ 
+         if (!(addrs = qemuDomainCCWAddressSetCreate()))
+@@ -1304,7 +1309,7 @@ qemuDomainAssignS390Addresses(virDomainDefPtr def,
+             goto cleanup;
+     } else if (virQEMUCapsGet(qemuCaps, QEMU_CAPS_VIRTIO_S390)) {
+         /* deal with legacy virtio-s390 */
+-        qemuDomainPrimeS390VirtioDevices(
++        qemuDomainPrimeVirtioDeviceAddresses(
+             def, VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390);
+     }
+ 
+@@ -1327,6 +1332,18 @@ cleanup:
+ 
+     return ret;
+ }
++static int
++qemuDomainAssignARMVirtioMMIOAddresses(virDomainDefPtr def,
++                                       virQEMUCapsPtr qemuCaps)
++{
++    if (def->os.arch == VIR_ARCH_ARMV7L &&
++        STRPREFIX(def->os.machine, "vexpress-") &&
++        virQEMUCapsGet(qemuCaps, QEMU_CAPS_DEVICE_VIRTIO_MMIO)) {
++        qemuDomainPrimeVirtioDeviceAddresses(
++            def, VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO);
++    }
++    return 0;
++}
+ 
+ static int
+ qemuSpaprVIOFindByReg(virDomainDefPtr def ATTRIBUTE_UNUSED,
+@@ -1912,6 +1929,10 @@ int qemuDomainAssignAddresses(virDomainDefPtr def,
+     if (rc)
+         return rc;
+ 
++    rc = qemuDomainAssignARMVirtioMMIOAddresses(def, qemuCaps);
++    if (rc)
++        return rc;
++
+     return qemuDomainAssignPCIAddresses(def, qemuCaps, obj);
+ }
+ 
+@@ -4367,6 +4388,9 @@ qemuBuildDriveDevStr(virDomainDefPtr def,
+         } else if (disk->info.type ==
+                    VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390) {
+             virBufferAddLit(&opt, "virtio-blk-s390");
++        } else if (disk->info.type ==
++                   VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO) {
++            virBufferAddLit(&opt, "virtio-blk-device");
+         } else {
+             virBufferAddLit(&opt, "virtio-blk-pci");
+         }
+@@ -4645,6 +4669,9 @@ qemuBuildControllerDevStr(virDomainDefPtr domainDef,
+             else if (def->info.type ==
+                      VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390)
+                 virBufferAddLit(&buf, "virtio-scsi-s390");
++            else if (def->info.type ==
++                     VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO)
++                virBufferAddLit(&buf, "virtio-scsi-device");
+             else
+                 virBufferAddLit(&buf, "virtio-scsi-pci");
+             break;
+@@ -4674,6 +4701,9 @@ qemuBuildControllerDevStr(virDomainDefPtr domainDef,
+         } else if (def->info.type ==
+                    VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390) {
+             virBufferAddLit(&buf, "virtio-serial-s390");
++        } else if (def->info.type ==
++                   VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO) {
++            virBufferAddLit(&buf, "virtio-serial-device");
+         } else {
+             virBufferAddLit(&buf, "virtio-serial");
+         }
+@@ -4806,6 +4836,8 @@ qemuBuildNicDevStr(virDomainDefPtr def,
+             nic = "virtio-net-ccw";
+         else if (net->info.type == VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390)
+             nic = "virtio-net-s390";
++        else if (net->info.type == VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO)
++            nic = "virtio-net-device";
+         else
+             nic = "virtio-net-pci";
+ 
+@@ -5054,6 +5086,9 @@ qemuBuildMemballoonDevStr(virDomainDefPtr def,
+         case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_CCW:
+             virBufferAddLit(&buf, "virtio-balloon-ccw");
+             break;
++        case VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO:
++            virBufferAddLit(&buf, "virtio-balloon-device");
++            break;
+         default:
+             virReportError(VIR_ERR_XML_ERROR,
+                            _("memballoon unsupported with address type '%s'"),
+@@ -6055,6 +6090,8 @@ qemuBuildRNGDeviceArgs(virCommandPtr cmd,
+         virBufferAsprintf(&buf, "virtio-rng-ccw,rng=%s", dev->info.alias);
+     else if (dev->info.type == VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_S390)
+         virBufferAsprintf(&buf, "virtio-rng-s390,rng=%s", dev->info.alias);
++    else if (dev->info.type == VIR_DOMAIN_DEVICE_ADDRESS_TYPE_VIRTIO_MMIO)
++        virBufferAsprintf(&buf, "virtio-rng-device,rng=%s", dev->info.alias);
+     else
+         virBufferAsprintf(&buf, "virtio-rng-pci,rng=%s", dev->info.alias);
+ 
+@@ -7331,7 +7368,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+      *
+      * NB, no support for -netdev without use of -device
+      */
+-    if (qemuDomainSupportsNetdev(def, qemuCaps)) {
++    if (qemuDomainSupportsNetdev(def, qemuCaps, net)) {
+         if (!(host = qemuBuildHostNetStr(net, driver,
+                                          ',', vlan,
+                                          tapfdName, tapfdSize,
+@@ -7339,7 +7376,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+             goto cleanup;
+         virCommandAddArgList(cmd, "-netdev", host, NULL);
+     }
+-    if (qemuDomainSupportsNicdev(def, qemuCaps)) {
++    if (qemuDomainSupportsNicdev(def, qemuCaps, net)) {
+         bool multiqueue = tapfdSize > 1 || vhostfdSize > 1;
+ 
+         if (!(nic = qemuBuildNicDevStr(def, net, vlan, bootindex,
+@@ -7351,7 +7388,7 @@ qemuBuildInterfaceCommandLine(virCommandPtr cmd,
+             goto cleanup;
+         virCommandAddArgList(cmd, "-net", nic, NULL);
+     }
+-    if (!qemuDomainSupportsNetdev(def, qemuCaps)) {
++    if (!qemuDomainSupportsNetdev(def, qemuCaps, net)) {
+         if (!(host = qemuBuildHostNetStr(net, driver,
+                                          ',', vlan,
+                                          tapfdName, tapfdSize,
+@@ -8402,7 +8439,7 @@ qemuBuildCommandLine(virConnectPtr conn,
+             int vlan;
+ 
+             /* VLANs are not used with -netdev, so don't record them */
+-            if (qemuDomainSupportsNetdev(def, qemuCaps))
++            if (qemuDomainSupportsNetdev(def, qemuCaps, net))
+                 vlan = -1;
+             else
+                 vlan = i;
+diff --git a/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.args b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.args
+new file mode 100644
+index 0000000..62de9d3
+--- /dev/null
++++ b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.args
+@@ -0,0 +1,14 @@
++LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test QEMU_AUDIO_DRV=none \
++/usr/bin/qemu-system-arm -S -M vexpress-a9 -m 1024 -smp 1 -nographic \
++-nodefconfig -nodefaults -monitor unix:/tmp/test-monitor,server,nowait \
++-boot c -kernel /arm.kernel -initrd /arm.initrd -append \
++'console=ttyAMA0,115200n8 rw root=/dev/vda3 rootwait physmap.enabled=0' \
++-dtb /arm.dtb -device virtio-serial-device,id=virtio-serial0 -usb \
++-drive file=/arm.raw,if=none,id=drive-virtio-disk0 \
++-device virtio-blk-device,drive=drive-virtio-disk0,id=virtio-disk0 \
++-device virtio-net-device,vlan=0,id=net0,mac=52:54:00:09:a4:37 \
++-net user,vlan=0,name=hostnet0 -serial pty -chardev pty,id=charconsole1 \
++-device virtconsole,chardev=charconsole1,id=console1 \
++-device virtio-balloon-device,id=balloon0 \
++-object rng-random,id=rng0,filename=/dev/random \
++-device virtio-rng-device,rng=rng0
+diff --git a/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.xml b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.xml
+new file mode 100644
+index 0000000..2acf3c9
+--- /dev/null
++++ b/tests/qemuxml2argvdata/qemuxml2argv-arm-vexpressa9-virtio.xml
+@@ -0,0 +1,45 @@
++<domain type="qemu">
++  <name>armtest</name>
++  <uuid>496d7ea8-9739-544b-4ebd-ef08be936e6a</uuid>
++  <memory>1048576</memory>
++  <currentMemory>1048576</currentMemory>
++  <vcpu>1</vcpu>
++  <os>
++    <type arch="armv7l" machine="vexpress-a9">hvm</type>
++    <kernel>/arm.kernel</kernel>
++    <initrd>/arm.initrd</initrd>
++    <dtb>/arm.dtb</dtb>
++    <cmdline>console=ttyAMA0,115200n8 rw root=/dev/vda3 rootwait physmap.enabled=0</cmdline>
++  </os>
++  <features>
++    <acpi/>
++    <apic/>
++    <pae/>
++  </features>
++  <clock offset="utc"/>
++  <on_poweroff>destroy</on_poweroff>
++  <on_reboot>restart</on_reboot>
++  <on_crash>restart</on_crash>
++  <devices>
++    <emulator>/usr/bin/qemu-system-arm</emulator>
++    <disk type='file' device='disk'>
++      <source file='/arm.raw'/>
++      <target dev='vda' bus='virtio'/>
++    </disk>
++    <interface type='user'>
++      <mac address='52:54:00:09:a4:37'/>
++      <model type='virtio'/>
++    </interface>
++    <console type='pty'/>
++    <console type='pty'>
++      <target type='virtio' port='0'/>
++    </console>
++    <memballoon model='virtio'/>
++    <!--
++      This actually doesn't work in practice because vexpress only has
++      4 virtio slots available, rng makes 5 -->
++    <rng model='virtio'>
++      <backend model='random'>/dev/random</backend>
++    </rng>
++  </devices>
++</domain>
+diff --git a/tests/qemuxml2argvtest.c b/tests/qemuxml2argvtest.c
+index 6ecabbf..ae8cc3b 100644
+--- a/tests/qemuxml2argvtest.c
++++ b/tests/qemuxml2argvtest.c
+@@ -1062,6 +1062,10 @@ mymain(void)
+     DO_TEST("arm-vexpressa9-basic",
+             QEMU_CAPS_DEVICE, QEMU_CAPS_NODEFCONFIG, QEMU_CAPS_DTB,
+             QEMU_CAPS_DRIVE);
++    DO_TEST("arm-vexpressa9-virtio",
++            QEMU_CAPS_DEVICE, QEMU_CAPS_NODEFCONFIG, QEMU_CAPS_DTB,
++            QEMU_CAPS_DRIVE, QEMU_CAPS_DEVICE_VIRTIO_MMIO,
++            QEMU_CAPS_DEVICE_VIRTIO_RNG, QEMU_CAPS_OBJECT_RNG_RANDOM);
+ 
+     virObjectUnref(driver.config);
+     virObjectUnref(driver.caps);

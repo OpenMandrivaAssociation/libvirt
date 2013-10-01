@@ -1,0 +1,23 @@
+From a0ed55a9ab7c90723490363febabd27fa59877c8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Sun, 1 Sep 2013 09:53:03 +0200
+Subject: [PATCH] Fix AM_LDFLAGS typo (cherry picked from commit
+ fe502de3bcdd76a0d256206111945ca7e4f4388a)
+
+---
+ src/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 636bcbc..19dfb81 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1455,7 +1455,7 @@ libvirt_driver_nwfilter_la_CFLAGS = \
+ 		-I$(top_srcdir)/src/access \
+ 		-I$(top_srcdir)/src/conf \
+ 		$(AM_CFLAGS)
+-libvirt_driver_nwfilter_la_LDFLAGS = $(LD_AMFLAGS)
++libvirt_driver_nwfilter_la_LDFLAGS = $(AM_LDFLAGS)
+ libvirt_driver_nwfilter_la_LIBADD = $(LIBPCAP_LIBS) $(LIBNL_LIBS) $(DBUS_LIBS)
+ if WITH_DRIVER_MODULES
+ libvirt_driver_nwfilter_la_LIBADD += ../gnulib/lib/libgnu.la

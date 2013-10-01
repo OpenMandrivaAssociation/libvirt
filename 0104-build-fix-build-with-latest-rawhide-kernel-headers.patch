@@ -1,0 +1,125 @@
+From bcba68498f698dedfdc83687c72e0e6dd7dc0e96 Mon Sep 17 00:00:00 2001
+From: Eric Blake <eblake@redhat.com>
+Date: Fri, 13 Sep 2013 10:11:26 -0600
+Subject: [PATCH] build: fix build with latest rawhide kernel headers
+
+Bother those kernel developers.  In the latest rawhide, kernel
+and glibc have now been unified so that <netinet/in.h> and
+<linux/in6.h> no longer clash; but <linux/if_bridge.h> is still
+not self-contained.  Because of the latest header change, the
+build is failing with:
+
+checking for linux/param.h... no
+configure: error: You must install kernel-headers in order to compile libvirt with QEMU or LXC support
+
+with details:
+
+In file included from conftest.c:561:0:
+/usr/include/linux/in6.h:71:18: error: field 'flr_dst' has incomplete type
+  struct in6_addr flr_dst;
+
+We need a workaround to avoid our workaround :)
+
+* configure.ac (NETINET_LINUX_WORKAROUND): New test.
+* src/util/virnetdevbridge.c (includes): Use it.
+
+Signed-off-by: Eric Blake <eblake@redhat.com>
+(cherry picked from commit e62e0094dcd0ca1484491a9cc62919473b647f11)
+---
+ configure.ac               | 39 +++++++++++++++++++++++++++++----------
+ src/util/virnetdevbridge.c | 24 ++++++++++++++----------
+ 2 files changed, 43 insertions(+), 20 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index f853e03..1956717 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1003,18 +1003,37 @@ dnl check for kernel headers required by src/bridge.c
+ dnl
+ if test "$with_linux" = "yes"; then
+   if test "$with_qemu" = "yes" || test "$with_lxc" = "yes" ; then
++    # Various kernel versions have headers that are not self-standing, but
++    # yet are incompatible with the corresponding glibc headers.  In order
++    # to guarantee compilation across a wide range of versions (from RHEL 5
++    # to rawhide), we first have to probe whether glibc and kernel can be
++    # used in tandem; and if not, provide workarounds that ensure that
++    # ABI-compatible IPv6 types are present for use by the kernel headers.
++    # These probes mirror the usage in virnetdevbridge.c
++    AC_CACHE_CHECK(
++      [whether <linux/*.h> and <netinet/*.h> headers are compatible],
++      [lv_cv_netinet_linux_compatible],
++      [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++        #include <netinet/in.h>
++        #include <linux/in6.h>
++      ]])],
++      [lv_cv_netinet_linux_compatible=yes],
++      [lv_cv_netinet_linux_compatible=no])])
++    if test "x$lv_cv_netinet_linux_compatible" != xyes; then
++      AC_DEFINE([NETINET_LINUX_WORKAROUND], [1],
++        [define to 1 if Linux kernel headers require a workaround to avoid
++        compilation errors when mixed with glibc netinet headers])
++    fi
+     AC_CHECK_HEADERS([linux/param.h linux/sockios.h linux/if_bridge.h linux/if_tun.h],,
+       [AC_MSG_ERROR([You must install kernel-headers in order to compile libvirt with QEMU or LXC support])],
+-      [[/* The kernel folks broke their headers when used with particular
+-         * glibc versions; although the structs are ABI compatible, the
+-         * C type system doesn't like struct redefinitions.  We work around
+-         * the problem here in the same manner as in virnetdevbridge.c.  */
+-        #include <netinet/in.h>
+-        #define in6_addr in6_addr_
+-        #define sockaddr_in6 sockaddr_in6_
+-        #define ipv6_mreq ipv6_mreq_
+-        #define in6addr_any in6addr_any_
+-        #define in6addr_loopback in6addr_loopback_
++      [[#include <netinet/in.h>
++        #if NETINET_LINUX_WORKAROUND
++        # define in6_addr in6_addr_
++        # define sockaddr_in6 sockaddr_in6_
++        # define ipv6_mreq ipv6_mreq_
++        # define in6addr_any in6addr_any_
++        # define in6addr_loopback in6addr_loopback_
++        #endif
+         #include <linux/in6.h>
+       ]])
+   fi
+diff --git a/src/util/virnetdevbridge.c b/src/util/virnetdevbridge.c
+index e4daa27..1a3740a 100644
+--- a/src/util/virnetdevbridge.c
++++ b/src/util/virnetdevbridge.c
+@@ -39,22 +39,26 @@
+ #ifdef __linux__
+ # include <linux/sockios.h>
+ # include <linux/param.h>     /* HZ                 */
++# if NETINET_LINUX_WORKAROUND
+ /* Depending on the version of kernel vs. glibc, there may be a collision
+  * between <net/in.h> and kernel IPv6 structures.  The different types
+  * are ABI compatible, but choke the C type system; work around it by
+  * using temporary redefinitions.  */
+-# define in6_addr in6_addr_
+-# define sockaddr_in6 sockaddr_in6_
+-# define ipv6_mreq ipv6_mreq_
+-# define in6addr_any in6addr_any_
+-# define in6addr_loopback in6addr_loopback_
++#  define in6_addr in6_addr_
++#  define sockaddr_in6 sockaddr_in6_
++#  define ipv6_mreq ipv6_mreq_
++#  define in6addr_any in6addr_any_
++#  define in6addr_loopback in6addr_loopback_
++# endif
+ # include <linux/in6.h>
+ # include <linux/if_bridge.h> /* SYSFS_BRIDGE_ATTR  */
+-# undef in6_addr
+-# undef sockaddr_in6
+-# undef ipv6_mreq
+-# undef in6addr_any
+-# undef in6addr_loopback
++# if NETINET_LINUX_WORKAROUND
++#  undef in6_addr
++#  undef sockaddr_in6
++#  undef ipv6_mreq
++#  undef in6addr_any
++#  undef in6addr_loopback
++# endif
+ 
+ # define JIFFIES_TO_MS(j) (((j)*1000)/HZ)
+ # define MS_TO_JIFFIES(ms) (((ms)*HZ)/1000)
