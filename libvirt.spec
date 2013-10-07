@@ -88,6 +88,7 @@ BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
 Requires:	gettext
+Requires:	netcf
 
 %track
 prog %name = {
