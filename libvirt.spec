@@ -166,7 +166,8 @@ Summary:	Tools to %{common_summary}
 Group:		System/Kernel and hardware
 Requires:	bridge-utils
 Requires:	polkit
-Suggests:	dnsmasq-base
+Requires:	ebtables
+Requires:	dnsmasq-base
 Suggests:	netcat-openbsd
 Conflicts:	%{_lib}virt0 < 1.0.1-1
 
@@ -241,7 +242,6 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/%{name}-lxc.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %{_libdir}/pkgconfig/%{name}.pc
 
 %files -n python-%{name}
@@ -282,6 +282,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %{_libdir}/libvirt/lock-driver/lockd.so
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
