@@ -13,43 +13,39 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define __noautoreq 'devel(libxenstore.*)'
 
+
+# enable\disable plugins
+%ifarch %{ix86} x86_64
+%bcond_without	xen
+%else
+%bcond_with	xen
+%endif
+%bcond_without	lxc
+%bcond_without	vbox
+%bcond_without	esx
+%bcond_without	hyperv
+%bcond_without	vmware
+%bcond_without	parallels
+
+
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.1.2
-Release:	3
+Version:	1.1.3
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
-
-# Fix launching ARM guests on x86 (patches posted upstream, F20 feature)
-Patch0001:	0001-qemu-Set-QEMU_AUDIO_DRV-none-with-nographic.patch
-Patch0002:	0002-domain_conf-Add-default-memballoon-in-PostParse-call.patch
-Patch0003:	0003-qemu-Don-t-add-default-memballoon-device-on-ARM.patch
-Patch0004:	0004-qemu-Fix-specifying-char-devs-for-ARM.patch
-Patch0005:	0005-qemu-Don-t-try-to-allocate-PCI-addresses-for-ARM.patch
-Patch0006:	0006-domain_conf-Add-disk-bus-sd-wire-it-up-for-qemu.patch
-Patch0007:	0007-qemu-Fix-networking-for-ARM-guests.patch
-Patch0008:	0008-qemu-Support-virtio-mmio-transport-for-virtio-on-ARM.patch
-
-# Sync with v1.1.2-maint
-Patch0101:	0101-virFileNBDDeviceAssociate-Avoid-use-of-uninitialized.patch
-Patch0102:	0102-Fix-AM_LDFLAGS-typo.patch
-Patch0103:	0103-Pass-AM_LDFLAGS-to-driver-modules-too.patch
-Patch0104:	0104-build-fix-build-with-latest-rawhide-kernel-headers.patch
-Patch0105:	0105-Also-store-user-group-ID-values-in-virIdentity.patch
-Patch0106:	0106-Ensure-system-identity-includes-process-start-time.patch
-Patch0107:	0107-Add-support-for-using-3-arg-pkcheck-syntax-for-proce.patch
-Patch0108:	0108-Fix-crash-in-remoteDispatchDomainMemoryStats-CVE-201.patch
-Patch0109:	0109-virsh-add-missing-async-option-in-opts_block_commit.patch
-Patch0110:	0110-Fix-typo-in-identity-code-which-is-pre-requisite-for.patch
-Patch0111:	0111-Add-a-virNetSocketNewConnectSockFD-method.patch
-Patch0112:	0112-Add-test-case-for-virNetServerClient-object-identity.patch
-
-# Fix snapshot restore when VM has disabled usb support (bz #1011520)
-Patch0201:	0201-qemu-Fix-checking-of-ABI-stability-when-restoring-ex.patch
-Patch0202:	0202-qemu-Use-migratable-XML-definition-when-doing-extern.patch
+# Allow QoS change with update-device (bz #1014200)
+Patch0001:	0001-qemu_hotplug-Allow-QoS-update-in-qemuDomainChangeNet.patch
+Patch0002:	0002-virNetDevBandwidthEqual-Make-it-more-robust.patch
+# Fix nwfilter crash during firewalld install (bz #1014762)
+Patch0003:	0003-Remove-virConnectPtr-arg-from-virNWFilterDefParse.patch
+Patch0004:	0004-Don-t-pass-virConnectPtr-in-nwfilter-struct-domUpdat.patch
+Patch0005:	0005-Remove-use-of-virConnectPtr-from-all-remaining-nwfil.patch
+# Fix crash with nographics (bz #1014088)
+Patch0006:	0006-qemu-cgroup-Fix-crash-if-starting-nographics-guest.patch
 
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
@@ -69,7 +65,7 @@ BuildRequires:	numa-devel
 %endif
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
-%ifarch %{ix86}	x86_64
+%if %{with xen}
 BuildRequires:	xen-devel >= 3.0.4
 %endif
 BuildRequires:	pkgconfig(avahi-client)
@@ -91,6 +87,7 @@ BuildRequires: 	pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
+Requires:	gettext
 
 %track
 prog %name = {
@@ -176,6 +173,18 @@ Conflicts:	%{_lib}virt0 < 1.0.1-1
 
 This package contains tools for the %{name} library.
 
+
+%if %{with lxc}
+%package daemon-lxc
+Summary: Server side daemon & driver required to run LXC guests
+Group: Development/Libraries
+Requires: libvirt = %{version}-%{release}
+
+%description daemon-lxc
+Server side daemon and driver required to manage the virtualization
+capabilities of LXC
+%endif
+
 %prep
 %setup -q
 %apply_patches
@@ -188,6 +197,27 @@ autoreconf -fi
 	--with-html-subdir=%{name} \
 	--with-udev \
 	--with-init_script=systemd \
+	%if !%{with xen}
+	--without-xenapi \
+	%endif
+	%if !%{with lxc}
+	--without-lxc \
+	%endif
+	%if !%{with vbox}
+	--without-vbox \
+	%endif
+	%if !%{with esx}
+	--without-esx \
+	%endif
+	%if !%{with hyperv}
+	--without-hyperv \
+	%endif
+	%if !%{with vmware}
+	--without-vmware \
+	%endif
+	%if !%{with parallels}
+	--without-parallels \
+	%endif
 	--without-hal
 
 %make LIBS="-ltirpc"
