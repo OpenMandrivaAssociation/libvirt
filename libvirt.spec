@@ -31,7 +31,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	1.1.3
-Release:	2
+Release:	3
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -89,6 +89,7 @@ BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
 Requires:	gettext
 Requires:	netcf
+Requires:	python-gobject-cairo
 
 %track
 prog %name = {
