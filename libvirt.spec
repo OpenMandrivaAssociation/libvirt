@@ -166,7 +166,8 @@ Summary:	Tools to %{common_summary}
 Group:		System/Kernel and hardware
 Requires:	bridge-utils
 Requires:	polkit
-Suggests:	dnsmasq-base
+Requires:	ebtables
+Requires:	dnsmasq-base
 Suggests:	netcat-openbsd
 Conflicts:	%{_lib}virt0 < 1.0.1-1
 
