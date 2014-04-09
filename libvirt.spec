@@ -16,7 +16,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	1.1.2
-Release:	1
+Release:	1.1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -166,7 +166,8 @@ Summary:	Tools to %{common_summary}
 Group:		System/Kernel and hardware
 Requires:	bridge-utils
 Requires:	polkit
-Suggests:	dnsmasq-base
+Requires:	ebtables
+Requires:	dnsmasq-base
 Suggests:	netcat-openbsd
 Conflicts:	%{_lib}virt0 < 1.0.1-1
 
