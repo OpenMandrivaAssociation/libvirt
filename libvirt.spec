@@ -30,23 +30,13 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.1.3
-Release:	7
+Version:	1.2.3
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
-# Allow QoS change with update-device (bz #1014200)
-Patch0001:	0001-qemu_hotplug-Allow-QoS-update-in-qemuDomainChangeNet.patch
-Patch0002:	0002-virNetDevBandwidthEqual-Make-it-more-robust.patch
-# Fix nwfilter crash during firewalld install (bz #1014762)
-Patch0003:	0003-Remove-virConnectPtr-arg-from-virNWFilterDefParse.patch
-Patch0004:	0004-Don-t-pass-virConnectPtr-in-nwfilter-struct-domUpdat.patch
-Patch0005:	0005-Remove-use-of-virConnectPtr-from-all-remaining-nwfil.patch
-# Fix crash with nographics (bz #1014088)
-Patch0006:	0006-qemu-cgroup-Fix-crash-if-starting-nographics-guest.patch
-
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
 
@@ -82,14 +72,12 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
-BuildRequires:	pkgconfig(python)
 BuildRequires: 	pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 Requires:	cyrus-sasl
 Requires:	gettext
 Requires:	netcf
-Requires:	python-gobject-cairo
 
 %track
 prog %name = {
@@ -149,16 +137,6 @@ Provides:	%{name}-devel = %{version}-%{release}
 
 This package contains the header files and libraries needed for
 developing programs using the %{name} library.
-
-%package -n python-%{name}
-Summary:	Python bindings to %{common_summary}
-Group:		Development/Python
-Conflicts:	%{name}-utils < 1.0.1-1
-
-%description -n python-%{name}
-%{common_description}
-
-This package contains the python bindings for the %{name} library.
 
 %package -n %{name}-utils
 Summary:	Tools to %{common_summary}
@@ -235,7 +213,6 @@ install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
 # fix documentation
-#mv %{buildroot}%{_docdir}/%{name}-python-%{version} %{buildroot}%{_docdir}/python-%{name}
 install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 %check
@@ -275,11 +252,6 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/%{name}-lxc.so
 %{_libdir}/pkgconfig/%{name}.pc
-
-%files -n python-%{name}
-#% doc %{_docdir}/python-%{name}
-%{py_platsitedir}/%{name}*.py
-%{py_platsitedir}/%{name}mod*.so
 
 %files -n %{name}-utils -f %{name}.lang
 %dir %{_docdir}/%{name}
