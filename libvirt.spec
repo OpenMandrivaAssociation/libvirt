@@ -77,7 +77,7 @@ BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 numactl open-iscsi parted polkit radvd scrub systemd
+BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 numactl open-iscsi parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
