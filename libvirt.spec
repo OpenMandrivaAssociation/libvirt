@@ -31,7 +31,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	1.2.3
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -75,6 +75,10 @@ BuildRequires:	pkgconfig(polkit-agent-1) polkit
 BuildRequires: 	pkgconfig(systemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
+
+# add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
+BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 numactl open-iscsi parted polkit radvd scrub systemd
+
 Requires:	cyrus-sasl
 Requires:	gettext
 Requires:	netcf
