@@ -30,8 +30,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.2.3
-Release:	4
+Version:	1.2.9
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -256,6 +256,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/%{name}-lxc.so
 %{_libdir}/pkgconfig/%{name}.pc
+%{_libdir}/pkgconfig/%{name}-qemu.pc
+%{_libdir}/pkgconfig/%{name}-lxc.pc
 
 %files -n %{name}-utils -f %{name}.lang
 %dir %{_docdir}/%{name}
@@ -276,6 +278,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libexecdir}/libvirt_iohelper
+%{_libexecdir}/libvirt_leasehelper
 %{_libexecdir}/libvirt_lxc
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
@@ -289,6 +292,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_network.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %{_libdir}/libvirt/lock-driver/lockd.so
@@ -309,6 +314,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_prefix}/lib/sysctl.d/libvirtd.conf
+%{_unitdir}/libvirtd.socket
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virtlockd.*
