@@ -59,6 +59,7 @@ BuildRequires:	readline-devel
 %if %{with xen}
 BuildRequires:	xen-devel >= 3.0.4
 %endif
+BuildRequires:	xsltproc
 BuildRequires:	pkgconfig(avahi-client)
 BuildRequires:	pkgconfig(blkid)
 BuildRequires:	pkgconfig(fuse)
