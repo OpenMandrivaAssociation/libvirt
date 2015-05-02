@@ -39,7 +39,7 @@ Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
-
+BuildRequires:	docbook-style-xsl
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
@@ -52,6 +52,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
 %ifnarch %arm %mips aarch64
 BuildRequires:	numa-devel
+BuildRequires:	numactl
 %endif
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
@@ -77,7 +78,7 @@ BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 numactl open-iscsi parted polkit radvd systemd
+BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
