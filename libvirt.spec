@@ -294,8 +294,6 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_network.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %{_libdir}/libvirt/lock-driver/lockd.so
