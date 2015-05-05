@@ -315,7 +315,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
-%config(noreplace) %{_prefix}/lib/sysctl.d/libvirtd.conf
+%config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_unitdir}/libvirtd.socket
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
