@@ -30,8 +30,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.2.3
-Release:	2
+Version:	1.2.15
+Release:	0.1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -39,7 +39,7 @@ Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
-
+BuildRequires:	docbook-style-xsl
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
@@ -52,12 +52,14 @@ BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
 %ifnarch %arm %mips aarch64
 BuildRequires:	numa-devel
+BuildRequires:	numactl
 %endif
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
 %if %{with xen}
 BuildRequires:	xen-devel >= 3.0.4
 %endif
+BuildRequires:	xsltproc
 BuildRequires:	pkgconfig(avahi-client)
 BuildRequires:	pkgconfig(blkid)
 BuildRequires:	pkgconfig(fuse)
@@ -77,7 +79,7 @@ BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 numactl open-iscsi parted polkit radvd systemd
+BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
@@ -175,7 +177,7 @@ capabilities of LXC
 
 %build
 autoreconf -fi
-%configure2_5x \
+%configure \
 	--disable-static \
 	--localstatedir=%{_var}  \
 	--with-html-subdir=%{name} \
@@ -256,6 +258,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/%{name}-lxc.so
 %{_libdir}/pkgconfig/%{name}.pc
+%{_libdir}/pkgconfig/%{name}-qemu.pc
+%{_libdir}/pkgconfig/%{name}-lxc.pc
 
 %files -n %{name}-utils -f %{name}.lang
 %dir %{_docdir}/%{name}
@@ -276,6 +280,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libexecdir}/libvirt_iohelper
+%{_libexecdir}/libvirt_leaseshelper
 %{_libexecdir}/libvirt_lxc
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
@@ -289,8 +294,10 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%if %{with xen}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
+%endif
 %{_libdir}/libvirt/lock-driver/lockd.so
 %{_var}/run/libvirt
 %{_var}/lib/libvirt
@@ -308,7 +315,8 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
-%config(noreplace) %{_prefix}/lib/sysctl.d/libvirtd.conf
+%config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
+%{_unitdir}/libvirtd.socket
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virtlockd.*
