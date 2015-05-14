@@ -150,6 +150,7 @@ Group:		System/Kernel and hardware
 Requires:	bridge-utils
 Requires:	polkit
 Requires:	ebtables
+Requires:	netcf
 Requires:	dnsmasq-base
 Suggests:	netcat-openbsd
 Conflicts:	%{_lib}virt0 < 1.0.1-1
