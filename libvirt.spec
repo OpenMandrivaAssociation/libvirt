@@ -37,6 +37,7 @@ Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
 Source1:	%{name}-tmpfiles.conf
+Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
 BuildRequires:	docbook-style-xsl
