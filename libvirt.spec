@@ -31,7 +31,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	1.2.15
-Release:	4
+Release:	5
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
