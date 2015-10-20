@@ -76,6 +76,7 @@ BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
 BuildRequires: 	pkgconfig(systemd)
+BuildRequires: 	pkgconfig(libsystemd-daemon)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 
