@@ -30,8 +30,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.2.15
-Release:	5
+Version:	1.2.20
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -206,7 +206,11 @@ autoreconf -fi
 	%if !%{with parallels}
 	--without-parallels \
 	%endif
-	--without-hal
+	--without-hal \
+	--with-systemd-daemon \
+	--with-udev \
+	--with-polkit \
+	--with-avahi
 
 %make LIBS="-ltirpc"
 
@@ -227,6 +231,13 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
 # http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
 #make check
+
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-libvirt.preset << EOF
+enable libvirtd.socket
+enable libvirtd.service
+enable virtlockd.socket
+EOF
 
 %post -n %{name}-utils
 #_tmpfilescreate %{name}
@@ -318,6 +329,7 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
+%{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.socket
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
