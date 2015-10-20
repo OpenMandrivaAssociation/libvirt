@@ -1,4 +1,5 @@
 %define _disable_ld_no_undefined 1
+%define _disable_lto 1
 
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
