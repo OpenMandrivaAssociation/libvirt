@@ -7,6 +7,7 @@ capabilities of recent versions of Linux.
 
 %define major 0
 %define libname %mklibname virt %{major}
+%define libadmin %mklibname virt-admin %{major}
 %define libqemu %mklibname virt-qemu %{major}
 %define liblxc %mklibname virt-lxc %{major}
 %define devname %mklibname -d virt
@@ -31,7 +32,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.2.20
+Version:	1.2.21
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -104,6 +105,14 @@ a single hardware system where the basic resources are driven by a
 Linux instance. The library aim at providing long term stable C API
 initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
+
+%package -n %{libadmin}
+Summary:        A library to %{common_summary}
+Group:          System/Libraries
+
+%description -n %{libadmin}
+This package contains the library needed to run programs dynamically
+linked with %{name}.
 
 %package -n %{libname}
 Summary:	A library to %{common_summary}
@@ -252,6 +261,9 @@ EOF
 %_preun_service libvirtd
 %_preun_service	virtlockd
 
+%files -n %{libadmin}
+%{_libdir}/%{name}-admin.so.%{major}*
+
 %files -n %{libname}
 %{_libdir}/%{name}.so.%{major}*
 
@@ -270,6 +282,7 @@ EOF
 %doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
+%{_libdir}/%{name}-admin.so
 %{_libdir}/%{name}-qemu.so
 %{_libdir}/%{name}-lxc.so
 %{_libdir}/pkgconfig/%{name}.pc
@@ -318,6 +331,8 @@ EOF
 %{_var}/lib/libvirt
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
+%{_datadir}/polkit-1/rules.d/50-libvirt.rules
+
 %{_datadir}/augeas
 %{_datadir}/%{name}
 %{_datadir}/systemtap/tapset/libvirt_functions.stp

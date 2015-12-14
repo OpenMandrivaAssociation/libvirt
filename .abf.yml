@@ -1,3 +1,4 @@
----
-sources:
+removed_sources:
   libvirt-1.2.20.tar.gz: f2c49d1f378382eb06529b9fe0ca555245701375
+sources:
+  libvirt-1.2.21.tar.gz: 897ca49c7325cb9ca7bef40002b8e5891ab98bea
