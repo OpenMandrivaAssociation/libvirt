@@ -32,7 +32,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.2.21
+Version:	1.3.3
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -261,6 +261,8 @@ EOF
 %_preun_service libvirtd
 %_preun_service	virtlockd
 
+%libpackage nss_libvirt 2
+
 %files -n %{libadmin}
 %{_libdir}/%{name}-admin.so.%{major}*
 
@@ -297,12 +299,14 @@ EOF
 %{_docdir}/%{name}/NEWS
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
+%{_mandir}/man1/virt-admin.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1.*
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man8/virtlockd.8.xz
+%{_mandir}/man8/virtlogd.8.xz
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
@@ -344,6 +348,7 @@ EOF
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
 %config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtlogd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
@@ -351,4 +356,5 @@ EOF
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virtlockd.*
+%{_unitdir}/virtlogd.*
 %{_tmpfilesdir}/%{name}.conf
