@@ -32,7 +32,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.3.3
+Version:	1.3.4
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -245,7 +245,6 @@ install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-libvirt.preset << EOF
-enable libvirtd.socket
 enable libvirtd.service
 enable virtlockd.socket
 EOF
@@ -352,7 +351,6 @@ EOF
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
-%{_unitdir}/libvirtd.socket
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virtlockd.*
