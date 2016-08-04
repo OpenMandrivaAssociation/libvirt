@@ -32,12 +32,12 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	1.3.4
+Version:	2.1.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
-Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.gz
+Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
@@ -78,7 +78,7 @@ BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
 BuildRequires: 	pkgconfig(systemd)
-BuildRequires: 	pkgconfig(libsystemd-daemon)
+BuildRequires: 	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 
@@ -289,6 +289,7 @@ EOF
 %{_libdir}/pkgconfig/%{name}.pc
 %{_libdir}/pkgconfig/%{name}-qemu.pc
 %{_libdir}/pkgconfig/%{name}-lxc.pc
+%{_libdir}/pkgconfig/%{name}-admin.pc
 
 %files -n %{name}-utils -f %{name}.lang
 %dir %{_docdir}/%{name}
