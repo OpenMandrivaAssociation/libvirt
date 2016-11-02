@@ -32,7 +32,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	2.1.0
+Version:	2.4.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
