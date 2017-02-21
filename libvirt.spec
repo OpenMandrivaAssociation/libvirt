@@ -32,14 +32,14 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	2.1.0
+Version:	3.0.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
-Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
+#Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
 BuildRequires:	docbook-style-xsl
@@ -261,6 +261,7 @@ EOF
 %_preun_service	virtlockd
 
 %libpackage nss_libvirt 2
+%libpackage nss_libvirt_guest 2
 
 %files -n %{libadmin}
 %{_libdir}/%{name}-admin.so.%{major}*
@@ -354,6 +355,7 @@ EOF
 %{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
+%{_unitdir}/virt-guest-shutdown.target
 %{_unitdir}/virtlockd.*
 %{_unitdir}/virtlogd.*
 %{_tmpfilesdir}/%{name}.conf
