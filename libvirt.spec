@@ -32,7 +32,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	3.0.0
+Version:	3.3.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -308,6 +308,7 @@ EOF
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man8/virtlockd.8.xz
 %{_mandir}/man8/virtlogd.8.xz
+%{_mandir}/man7/virkey*.7.xz
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
@@ -327,6 +328,7 @@ EOF
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %if %{with xen}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
