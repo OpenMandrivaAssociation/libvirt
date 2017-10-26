@@ -33,7 +33,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	3.4.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -178,6 +178,7 @@ This package contains tools for the %{name} library.
 Summary: Server side daemon & driver required to run LXC guests
 Group: Development/Libraries
 Requires: libvirt = %{version}-%{release}
+Requires: systemd-container
 
 %description daemon-lxc
 Server side daemon and driver required to manage the virtualization
