@@ -1,6 +1,8 @@
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
 
+%global optflags %{optflags} --rtlib=compiler-rt
+
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
@@ -32,14 +34,15 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	3.4.0
-Release:	2
+Version:	3.9.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 #Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
+Patch0:		libvirt-3.9.0-clang.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
 BuildRequires:	docbook-style-xsl
@@ -237,7 +240,7 @@ install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
 # fix documentation
-install -m 644 ChangeLog README TODO NEWS %{buildroot}%{_docdir}/%{name}
+install -m 644 ChangeLog README NEWS %{buildroot}%{_docdir}/%{name}
 
 %check
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
@@ -280,7 +283,6 @@ EOF
 %{_docdir}/%{name}
 %exclude %{_docdir}/%{name}/ChangeLog
 %exclude %{_docdir}/%{name}/README
-%exclude %{_docdir}/%{name}/TODO
 %exclude %{_docdir}/%{name}/NEWS
 %doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
@@ -297,7 +299,6 @@ EOF
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/ChangeLog
 %{_docdir}/%{name}/README
-%{_docdir}/%{name}/TODO
 %{_docdir}/%{name}/NEWS
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
