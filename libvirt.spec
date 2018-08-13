@@ -92,13 +92,6 @@ Requires:	cyrus-sasl
 Requires:	gettext
 Requires:	netcf
 
-%track
-prog %name = {
-	url = http://libvirt.org/sources/
-	version = %version
-	regex = %name-(__VER__)\.tar\.gz
-}
-
 %description
 %{common_description}
 
