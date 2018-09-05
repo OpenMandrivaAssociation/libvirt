@@ -49,6 +49,7 @@ Patch203:	rpcgen-libvirt-1.1.2.patch
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
 BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:	pkgconfig(libudev)
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
