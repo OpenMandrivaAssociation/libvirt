@@ -1,7 +1,8 @@
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
 
-%global optflags %{optflags} --rtlib=compiler-rt
+%global optflags %{optflags}
+#--rtlib=compiler-rt
 
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
@@ -20,7 +21,7 @@ capabilities of recent versions of Linux.
 
 # enable\disable plugins
 %ifarch %{ix86} x86_64
-%bcond_without	xen
+%bcond_with	xen
 %else
 %bcond_with	xen
 %endif
@@ -34,15 +35,15 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	3.9.0
-Release:	2
+Version:	4.7.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 #Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
-Patch0:		libvirt-3.9.0-clang.patch
+#Patch0:		libvirt-3.9.0-clang.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
 
 BuildRequires:	docbook-style-xsl
@@ -186,6 +187,9 @@ capabilities of LXC
 %apply_patches
 
 %build
+# not working with clang
+export CC=gcc
+export CXX=g++
 autoreconf -fi
 %configure \
 	--disable-static \
@@ -220,7 +224,7 @@ autoreconf -fi
 	--with-polkit \
 	--with-avahi
 
-%make LIBS="-ltirpc"
+%make LIBS="-ltirpc -ldl"
 
 %install
 %makeinstall_std SYSTEMD_UNIT_DIR=%{_unitdir}
@@ -235,16 +239,16 @@ install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 # fix documentation
 install -m 644 ChangeLog README NEWS %{buildroot}%{_docdir}/%{name}
 
-%check
-# fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
-# http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
-#make check
-
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-libvirt.preset << EOF
 enable libvirtd.service
 enable virtlockd.socket
 EOF
+
+%check
+# fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
+# http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
+#make check
 
 %post -n %{name}-utils
 #_tmpfilescreate %{name}
@@ -324,6 +328,7 @@ EOF
 %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
+%{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %if %{with xen}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
@@ -353,6 +358,6 @@ EOF
 %{_unitdir}/libvirtd.service
 %{_unitdir}/libvirt-guests.service
 %{_unitdir}/virt-guest-shutdown.target
-%{_unitdir}/virtlockd.*
-%{_unitdir}/virtlogd.*
+%{_unitdir}/virtlockd*.*
+%{_unitdir}/virtlogd*.*
 %{_tmpfilesdir}/%{name}.conf
