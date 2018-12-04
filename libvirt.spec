@@ -35,7 +35,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	4.9.0
+Version:	4.10.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -50,7 +50,6 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(libudev)
-BuildRequires:	pkgconfig(lvm2app)
 BuildRequires:	dmsetup
 BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
