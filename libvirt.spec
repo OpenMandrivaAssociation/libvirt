@@ -315,7 +315,6 @@ EOF
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
-%dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/uml/
 %{_libexecdir}/libvirt_iohelper
 %{_libexecdir}/libvirt_leaseshelper
 %{_libexecdir}/libvirt_lxc
@@ -329,7 +328,6 @@ EOF
 %{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
