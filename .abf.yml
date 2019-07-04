@@ -1,4 +1,2 @@
-removed_sources:
-  libvirt-4.10.0.tar.xz: 04d796b30c9dec4586a0774a607e90e2dd0353e7
 sources:
-  libvirt-5.0.0.tar.xz: 2daa9f44c8631d11d798b1e2ee6df726df449173
+  libvirt-5.5.0.tar.xz: c673428e23137b21b71bc29688e9bb0f66627937
