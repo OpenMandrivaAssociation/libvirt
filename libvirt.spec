@@ -320,6 +320,7 @@ EOF
 %{_libexecdir}/libvirt_lxc
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
+%{_prefix}/lib/firewalld/zones/libvirt.xml
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
