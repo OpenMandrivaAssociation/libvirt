@@ -35,7 +35,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	5.0.0
+Version:	5.5.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -228,10 +228,10 @@ autoreconf -fi
 	--with-polkit \
 	--with-avahi
 
-%make LIBS="-ltirpc -ldl"
+%make_build LIBS="-ltirpc -ldl"
 
 %install
-%makeinstall_std SYSTEMD_UNIT_DIR=%{_unitdir}
+%make_install SYSTEMD_UNIT_DIR=%{_unitdir}
 
 rm -f %{buildroot}%{_initrddir}/libvirt-guests
 find %{buildroot} -name '*.la' -delete
