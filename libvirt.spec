@@ -146,8 +146,10 @@ Group:		Development/C
 Requires:	%{libname} = %{version}
 Requires:	%{libqemu} = %{version}
 Requires:	%{liblxc} = %{version}
+%if %{with xen}
 %ifarch %{ix86} x86_64
 Requires:	xen-devel
+%endif
 %endif
 Provides:	%{name}-devel = %{version}-%{release}
 
