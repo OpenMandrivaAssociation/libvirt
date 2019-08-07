@@ -365,4 +365,9 @@ EOF
 %{_unitdir}/virt-guest-shutdown.target
 %{_unitdir}/virtlockd*.*
 %{_unitdir}/virtlogd*.*
+%{_unitdir}/libvirtd.socket
+%{_unitdir}/libvirtd-ro.socket
+%{_unitdir}/libvirtd-admin.socket
+%{_unitdir}/libvirtd-tcp.socket
+%{_unitdir}/libvirtd-tls.socket
 %{_tmpfilesdir}/%{name}.conf
