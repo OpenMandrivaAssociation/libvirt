@@ -345,10 +345,10 @@ EOF
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/polkit-1/rules.d/50-libvirt.rules
 
-%{_unitdir}/virtproxyd.service
-%{_unitdir}/virtproxyd.socket
-%{_unitdir}/virtproxyd-ro.socket
-%{_unitdir}/virtproxyd-admin.socket
+#{_unitdir}/virtproxyd.service
+#{_unitdir}/virtproxyd.socket
+#{_unitdir}/virtproxyd-ro.socket
+#{_unitdir}/virtproxyd-admin.socket
 %{_unitdir}/virtproxyd-tcp.socket
 %{_unitdir}/virtproxyd-tls.socket
 %{_unitdir}/virtinterfaced.service
