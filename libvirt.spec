@@ -36,15 +36,15 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	5.7.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
-#Patch0:		libvirt-1.2.3-mga-no-daemonize.patch
-#Patch0:		libvirt-3.9.0-clang.patch
 Patch203:	rpcgen-libvirt-1.1.2.patch
+# Fix systemd socket activation with TLS socket
+Patch0001:	0001-remote-fix-registration-of-TLS-socket.patch
 
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
@@ -383,14 +383,17 @@ EOF
 %{_unitdir}/virtlxcd.socket
 %{_unitdir}/virtlxcd-ro.socket
 %{_unitdir}/virtlxcd-admin.socket
+%if %{with xen}
 %{_unitdir}/virtxend.service
 %{_unitdir}/virtxend.socket
 %{_unitdir}/virtxend-ro.socket
 %{_unitdir}/virtxend-admin.socket
+%endif
 %{_unitdir}/virtvboxd.service
 %{_unitdir}/virtvboxd.socket
 %{_unitdir}/virtvboxd-ro.socket
 %{_unitdir}/virtvboxd-admin.socket
+%{_unitdir}/virtproxy*
 %{_libexecdir}/virt-login-shell-helper
 
 %{_datadir}/augeas
