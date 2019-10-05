@@ -285,7 +285,7 @@ EOF
 %exclude %{_docdir}/%{name}/ChangeLog
 %exclude %{_docdir}/%{name}/README
 %exclude %{_docdir}/%{name}/NEWS
-%doc %{_datadir}/gtk-doc/html/%{name}
+#doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-admin.so
