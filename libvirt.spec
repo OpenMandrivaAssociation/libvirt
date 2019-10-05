@@ -35,16 +35,14 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	5.7.0
-Release:	2
+Version:	5.8.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 Patch203:	rpcgen-libvirt-1.1.2.patch
-# Fix systemd socket activation with TLS socket
-Patch0001:	0001-remote-fix-registration-of-TLS-socket.patch
 
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
@@ -287,7 +285,7 @@ EOF
 %exclude %{_docdir}/%{name}/ChangeLog
 %exclude %{_docdir}/%{name}/README
 %exclude %{_docdir}/%{name}/NEWS
-%doc %{_datadir}/gtk-doc/html/%{name}
+#doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
 %{_libdir}/%{name}-admin.so
