@@ -43,8 +43,6 @@ Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 Patch203:	rpcgen-libvirt-1.1.2.patch
-# Fix systemd socket activation with TLS socket
-Patch0001:	0001-remote-fix-registration-of-TLS-socket.patch
 
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
