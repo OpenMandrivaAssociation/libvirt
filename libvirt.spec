@@ -267,11 +267,11 @@ EOF
 
 %check
 cd %{_vpath_builddir}
-if ! make check VIR_TEST_DEBUG=1
-then
-  cat test-suite.log || true
-  #exit 1
-fi
+#if ! make check VIR_TEST_DEBUG=1
+#then
+#  cat test-suite.log || true
+#  #exit 1
+#fi
 
 %pre -n %{name}-utils
 # 'libvirt' group is just to allow password-less polkit access to
