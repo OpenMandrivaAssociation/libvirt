@@ -1,0 +1,37 @@
+From 0a65cba423781f2cbf123354b7f670c4f441b385 Mon Sep 17 00:00:00 2001
+Message-Id: <0a65cba423781f2cbf123354b7f670c4f441b385.1575386313.git.crobinso@redhat.com>
+From: Jim Fehlig <jfehlig@suse.com>
+Date: Mon, 2 Dec 2019 20:48:24 -0700
+Subject: [PATCH] news: Fix XML validation
+
+The news schema requires two digits for both month and day in the date
+attribute. s/2/02/ in the day value of date to fix the following
+'make check' failure
+
+2165) Checking ../docs/news.xml against ../news.rng                     ...
+libvirt: XML Util error : XML document failed to validate against schema:
+Unable to validate doc against /home/jfehlig/virt/upstream/libvirt/build/../docs/schemas/../news.rng
+Element release failed to validate attributes
+
+Signed-off-by: Jim Fehlig <jfehlig@suse.com>
+Signed-off-by: Cole Robinson <crobinso@redhat.com>
+---
+ docs/news.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/docs/news.xml b/docs/news.xml
+index 55b227839e..46a3466238 100644
+--- a/docs/news.xml
++++ b/docs/news.xml
+@@ -42,7 +42,7 @@
+      -->
+ 
+ <libvirt>
+-  <release version="v5.10.0" date="2019-12-2">
++  <release version="v5.10.0" date="2019-12-02">
+     <section title="New features">
+       <change>
+         <summary>
+-- 
+2.23.0
+

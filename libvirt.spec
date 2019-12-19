@@ -32,17 +32,20 @@ capabilities of recent versions of Linux.
 %bcond_without	vmware
 %bcond_without	parallels
 
+# Force QEMU to run as non-root
+%define qemu_user  qemu
+%define qemu_group  qemu
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	5.10.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
-#Patch203:	rpcgen-libvirt-1.1.2.patch
+Patch0:		0001-news-Fix-XML-validation.patch
 
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
@@ -224,6 +227,8 @@ autoreconf -fi
 	%endif
 	--without-hal \
 	--with-systemd-daemon \
+        --with-qemu-user=%{qemu_user} \
+        --with-qemu-group=%{qemu_group} \
 	--with-udev \
 	--with-polkit \
 	--with-avahi
@@ -253,6 +258,13 @@ EOF
 # fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
 # http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
 #make check
+
+%pre -n %{name}-utils
+# 'libvirt' group is just to allow password-less polkit access to
+# libvirtd. The uid number is irrelevant, so we use dynamic allocation
+# described at the above link.
+getent group libvirt >/dev/null || groupadd -r libvirt
+exit 0
 
 %post -n %{name}-utils
 #_tmpfilescreate %{name}
