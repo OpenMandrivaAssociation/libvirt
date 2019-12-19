@@ -39,7 +39,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	5.10.0
-Release:	2
+Release:	3
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -195,14 +195,22 @@ capabilities of LXC
 
 %build
 # not working with clang
+export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 export CC=gcc
 export CXX=g++
 autoreconf -fi
+
+export CONFIGURE_TOP=../
+%define _configure ../configure
+mkdir %{_vpath_builddir}
+cd %{_vpath_builddir}
+
 %configure \
 	--disable-static \
 	--localstatedir=%{_var}  \
 	--with-html-subdir=%{name} \
 	--with-udev \
+        --enable-dependency-tracking \
 	--with-init_script=systemd \
 	%if !%{with xen}
 	--without-xenapi \
@@ -227,15 +235,19 @@ autoreconf -fi
 	%endif
 	--without-hal \
 	--with-systemd-daemon \
+        --with-nss-plugin \
+        --with-yajl \
         --with-qemu-user=%{qemu_user} \
         --with-qemu-group=%{qemu_group} \
 	--with-udev \
 	--with-polkit \
 	--with-avahi
 
-%make_build LIBS="-ltirpc -ldl"
+
+%make_build V=1
 
 %install
+pushd %{_vpath_builddir}
 %make_install SYSTEMD_UNIT_DIR=%{_unitdir}
 
 rm -f %{buildroot}%{_initrddir}/libvirt-guests
@@ -245,8 +257,7 @@ install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
-# fix documentation
-install -m 644 ChangeLog README NEWS %{buildroot}%{_docdir}/%{name}
+
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-libvirt.preset << EOF
@@ -255,9 +266,12 @@ enable virtlockd.socket
 EOF
 
 %check
-# fhimpe: disabled for now because it fails on 100Hz kernels, such as used on bs
-# http://www.mail-archive.com/libvir-list@redhat.com/msg13727.html
-#make check
+cd %{_vpath_builddir}
+if ! make check VIR_TEST_DEBUG=1
+then
+  cat test-suite.log || true
+  #exit 1
+fi
 
 %pre -n %{name}-utils
 # 'libvirt' group is just to allow password-less polkit access to
@@ -294,9 +308,6 @@ exit 0
 
 %files -n %{devname}
 %{_docdir}/%{name}
-%exclude %{_docdir}/%{name}/ChangeLog
-%exclude %{_docdir}/%{name}/README
-%exclude %{_docdir}/%{name}/NEWS
 #doc %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/%{name}.so
@@ -308,11 +319,8 @@ exit 0
 %{_libdir}/pkgconfig/%{name}-lxc.pc
 %{_libdir}/pkgconfig/%{name}-admin.pc
 
-%files -n %{name}-utils -f %{name}.lang
+%files -n %{name}-utils -f %{_vpath_builddir}/%{name}.lang
 %dir %{_docdir}/%{name}
-%{_docdir}/%{name}/ChangeLog
-%{_docdir}/%{name}/README
-%{_docdir}/%{name}/NEWS
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-admin.1*
