@@ -89,6 +89,7 @@ BuildRequires: 	pkgconfig(systemd)
 BuildRequires: 	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
+BuildRequires:  python3dist(docutils)
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
 BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
