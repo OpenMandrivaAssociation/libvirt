@@ -38,14 +38,13 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	5.10.0
-Release:	3
+Version:	6.0.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
-Patch0:		0001-news-Fix-XML-validation.patch
 
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
@@ -90,6 +89,7 @@ BuildRequires: 	pkgconfig(systemd)
 BuildRequires: 	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
+BuildRequires:  python3dist(docutils)
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
 BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
@@ -329,9 +329,9 @@ exit 0
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
-%{_mandir}/man8/virtlockd.8.xz
-%{_mandir}/man8/virtlogd.8.xz
-%{_mandir}/man7/virkey*.7.xz
+%{_mandir}/man8/virtlockd.8.*
+%{_mandir}/man8/virtlogd.8.*
+%{_mandir}/man7/virkey*.7.*
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
