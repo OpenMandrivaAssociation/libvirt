@@ -329,9 +329,9 @@ exit 0
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
-%{_mandir}/man8/virtlockd.8.xz
-%{_mandir}/man8/virtlogd.8.xz
-%{_mandir}/man7/virkey*.7.xz
+%{_mandir}/man8/virtlockd.8.*
+%{_mandir}/man8/virtlogd.8.*
+%{_mandir}/man7/virkey*.7.*
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
