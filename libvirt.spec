@@ -329,7 +329,7 @@ exit 0
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
-%{_mandir}/man1/virt-qemu-run.1.8
+%{_mandir}/man1/virt-qemu-run.1.*
 %{_mandir}/man8/virtlockd.8.*
 %{_mandir}/man8/virtlogd.8.*
 %{_mandir}/man7/virkey*.7.*
