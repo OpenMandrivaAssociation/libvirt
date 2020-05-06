@@ -38,7 +38,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	6.2.0
+Version:	6.3.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
