@@ -430,8 +430,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_sysconfdir}/sysconfig/virtinterfaced
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlxcd
-%config(noreplace) %{_sysconfdir}sysconfig/virtnetworkd
-%config(noreplace) %{_sysconfdir}/%config(noreplace) 
+%config(noreplace) %{_sysconfdir}/sysconfig/virtnetworkd
 %config(noreplace) %{_sysconfdir}/sysconfig/virtnodedevd
 %config(noreplace) %{_sysconfdir}/sysconfig/virtnwfilterd
 %config(noreplace) %{_sysconfdir}/sysconfig/virtproxyd
