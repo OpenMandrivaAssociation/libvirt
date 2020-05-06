@@ -428,6 +428,17 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
 %config(noreplace) %{_sysconfdir}/sysconfig/virtlogd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
+%config(noreplace) %{_sysconfdir}/sysconfig/virtinterfaced
+%config(noreplace) %{_sysconfdir}/sysconfig/virtlxcd
+%config(noreplace) %{_sysconfdir}sysconfig/virtnetworkd
+%config(noreplace) %{_sysconfdir}/%config(noreplace) 
+%config(noreplace) %{_sysconfdir}/sysconfig/virtnodedevd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtnwfilterd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtproxyd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtqemud
+%config(noreplace) %{_sysconfdir}/sysconfig/virtsecretd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtstoraged
+%config(noreplace) %{_sysconfdir}/sysconfig/virtvboxd
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.service
