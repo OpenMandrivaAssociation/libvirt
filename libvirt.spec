@@ -1,9 +1,6 @@
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
 
-%global optflags %{optflags}
-#--rtlib=compiler-rt
-
 %define common_summary interact with virtualization capabilities
 %define common_description Libvirt is a C toolkit to interact with the virtualization\
 capabilities of recent versions of Linux.
@@ -20,7 +17,7 @@ capabilities of recent versions of Linux.
 
 
 # enable\disable plugins
-%ifarch %{ix86} x86_64
+%ifarch %{ix86} %{x86_64}
 %bcond_with	xen
 %else
 %bcond_with	xen
@@ -38,7 +35,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	6.3.0
+Version:	6.4.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -148,7 +145,7 @@ Requires:	%{libname} = %{version}
 Requires:	%{libqemu} = %{version}
 Requires:	%{liblxc} = %{version}
 %if %{with xen}
-%ifarch %{ix86} x86_64
+%ifarch %{ix86} %{x86_64}
 Requires:	xen-devel
 %endif
 %endif
@@ -244,7 +241,7 @@ cd %{_vpath_builddir}
 	--with-avahi
 
 
-%make_build V=1
+%make_build V=1 -j2
 
 %install
 pushd %{_vpath_builddir}
