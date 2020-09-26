@@ -71,6 +71,7 @@ BuildRequires:	xen-devel >= 3.0.4
 %endif
 BuildRequires:	xsltproc
 BuildRequires:	pkgconfig(avahi-client)
+BuildRequires:  pkgconfig(bash-completion)
 BuildRequires:	pkgconfig(blkid)
 BuildRequires:	pkgconfig(fuse)
 BuildRequires:	pkgconfig(gnutls)
