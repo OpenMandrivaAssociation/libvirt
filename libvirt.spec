@@ -45,6 +45,8 @@ Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 
+BuildRequires:  cmake
+BuildRequires:  dmidecode
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
 BuildRequires:	pkgconfig(dbus-1)
@@ -76,8 +78,10 @@ BuildRequires:	pkgconfig(blkid)
 BuildRequires:  pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(fuse)
 BuildRequires:	pkgconfig(gnutls)
+BuildRequires:  pkgconfig(libacl)
 BuildRequires:  pkgconfig(libattr)
 BuildRequires:	pkgconfig(libcurl)
+BuildRequires:  pkgconfig(libiscsi)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libparted)
 BuildRequires:	pkgconfig(libssh2)
