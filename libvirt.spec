@@ -62,7 +62,7 @@ BuildRequires:	open-iscsi
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
-%ifnarch %arm %mips aarch64
+%ifnarch %arm %mips
 BuildRequires:	numa-devel
 BuildRequires:	numactl
 %endif
