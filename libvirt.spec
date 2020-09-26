@@ -73,6 +73,7 @@ BuildRequires:	xsltproc
 BuildRequires:	pkgconfig(avahi-client)
 BuildRequires:  pkgconfig(bash-completion)
 BuildRequires:	pkgconfig(blkid)
+BuildRequires:  pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(fuse)
 BuildRequires:	pkgconfig(gnutls)
 BuildRequires:  pkgconfig(libattr)
