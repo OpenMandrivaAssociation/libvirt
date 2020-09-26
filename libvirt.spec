@@ -15,6 +15,8 @@ capabilities of recent versions of Linux.
 # libxenstore is not versionned properly
 %define __noautoreq 'devel(libxenstore.*)'
 
+# Assorted violations in src/util
+%global optflags %{optflags} -fno-strict-aliasing -Wno-error=cpp
 
 # enable\disable plugins
 %ifarch %{ix86} %{x86_64}
@@ -25,7 +27,7 @@ capabilities of recent versions of Linux.
 %bcond_without	lxc
 %bcond_without	vbox
 %bcond_without	esx
-%bcond_without	hyperv
+%bcond_with	hyperv
 %bcond_without	vmware
 %bcond_without	parallels
 
@@ -86,7 +88,10 @@ BuildRequires: 	pkgconfig(systemd)
 BuildRequires: 	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
+BuildRequires:	pkgconfig(audit)
+BuildRequires:	pkgconfig(wireshark)
 BuildRequires:  python3dist(docutils)
+BuildRequires:	meson
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
 BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
@@ -193,62 +198,60 @@ capabilities of LXC
 %build
 # not working with clang
 export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
-export CC=gcc
-export CXX=g++
-autoreconf -fi
+#export CC=gcc
+#export CXX=g++
 
-export CONFIGURE_TOP=../
-%define _configure ../configure
-mkdir %{_vpath_builddir}
-cd %{_vpath_builddir}
-
-%configure \
-	--disable-static \
-	--localstatedir=%{_var}  \
-	--with-html-subdir=%{name} \
-	--with-udev \
-        --enable-dependency-tracking \
-	--with-init_script=systemd \
+%meson \
+	-Dudev=enabled \
+	-Dinit_script=systemd \
 	%if !%{with xen}
-	--without-xenapi \
+	-Ddriver_libxl=disabled \
 	%endif
 	%if !%{with lxc}
-	--without-lxc \
+	-Ddriver_lxc=disabled \
 	%endif
 	%if !%{with vbox}
-	--without-vbox \
+	-Ddriver_vbox=disabled \
 	%endif
 	%if !%{with esx}
-	--without-esx \
+	-Ddriver_esx=disabled \
 	%endif
 	%if !%{with hyperv}
-	--without-hyperv \
+	-Ddriver_hyperv=disabled \
 	%endif
 	%if !%{with vmware}
-	--without-vmware \
+	-Ddriver_vmware=disabled \
 	%endif
-	%if !%{with parallels}
-	--without-parallels \
-	%endif
-	--without-hal \
-	--with-systemd-daemon \
-        --with-nss-plugin \
-        --with-yajl \
-        --with-qemu-user=%{qemu_user} \
-        --with-qemu-group=%{qemu_group} \
-	--with-udev \
-	--with-polkit \
-	--with-avahi
+	-Ddriver_bhyve=disabled \
+	-Ddriver_vz=disabled \
+	-Dglusterfs=disabled \
+	-Dstorage_gluster=disabled \
+	-Dopenwsman=disabled \
+	-Dhal=disabled \
+        -Dnss=enabled \
+        -Dyajl=enabled \
+        -Dqemu-user=%{qemu_user} \
+        -Dqemu-group=%{qemu_group} \
+	-Dpolkit=enabled \
+	-Dapparmor=disabled \
+	-Dsecdriver_apparmor=disabled \
+	-Dapparmor_profiles=false \
+	-Dstorage_rbd=disabled \
+	-Dstorage_sheepdog=disabled \
+	-Dstorage_vstorage=disabled \
+	-Dstorage_zfs=disabled \
+	-Dnumad=disabled
 
-
-%make_build V=1 -j2
+%meson_build
 
 %install
-pushd %{_vpath_builddir}
-%make_install SYSTEMD_UNIT_DIR=%{_unitdir}
+%meson_install
+
+# ****ing meson doesn't know where systemd files go
+mkdir %{buildroot}/lib
+mv %{buildroot}%{_prefix}/lib/systemd %{buildroot}/lib
 
 rm -f %{buildroot}%{_initrddir}/libvirt-guests
-find %{buildroot} -name '*.la' -delete
 
 install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
@@ -263,7 +266,6 @@ enable virtlockd.socket
 EOF
 
 %check
-cd %{_vpath_builddir}
 #if ! make check VIR_TEST_DEBUG=1
 #then
 #  cat test-suite.log || true
@@ -316,7 +318,7 @@ exit 0
 %{_libdir}/pkgconfig/%{name}-lxc.pc
 %{_libdir}/pkgconfig/%{name}-admin.pc
 
-%files -n %{name}-utils -f %{_vpath_builddir}/%{name}.lang
+%files -n %{name}-utils -f %{name}.lang
 %dir %{_docdir}/%{name}
 %{_bindir}/*
 %{_mandir}/man1/virsh.1*
@@ -350,6 +352,10 @@ exit 0
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
+%{_libdir}/wireshark/epan/libvirt.so
+%{_datadir}/bash-completion/completions/virsh
+%{_datadir}/bash-completion/completions/virt-admin
+%{_datadir}/bash-completion/completions/vsh
 %if %{with xen}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
