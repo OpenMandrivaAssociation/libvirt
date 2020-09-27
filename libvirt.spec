@@ -62,10 +62,8 @@ BuildRequires:	open-iscsi
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	sasl-devel
-%ifnarch %arm %mips
-BuildRequires:	numa-devel
+BuildRequires:	pkgconfig(numa)
 BuildRequires:	numactl
-%endif
 BuildRequires:	pcap-devel
 BuildRequires:	readline-devel
 %if %{with xen}
