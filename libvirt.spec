@@ -13,23 +13,23 @@ capabilities of recent versions of Linux.
 %define devname %mklibname -d virt
 
 # libxenstore is not versionned properly
-%define __noautoreq 'devel(libxenstore.*)'
+%global __requires_exclude devel\\(libxenstore.*\\)
 
 # Assorted violations in src/util
 %global optflags %{optflags} -fno-strict-aliasing -Wno-error=cpp
 
 # enable\disable plugins
 %ifarch %{ix86} %{x86_64}
-%bcond_with	xen
+%bcond_with xen
 %else
-%bcond_with	xen
+%bcond_with xen
 %endif
-%bcond_without	lxc
-%bcond_without	vbox
-%bcond_without	esx
-%bcond_with	hyperv
-%bcond_without	vmware
-%bcond_without	parallels
+%bcond_without lxc
+%bcond_without vbox
+%bcond_without esx
+%bcond_with hyperv
+%bcond_without vmware
+%bcond_without parallels
 
 # Force QEMU to run as non-root
 %define qemu_user  qemu
@@ -38,15 +38,15 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	7.0.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
 Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 
-BuildRequires:  cmake
-BuildRequires:  dmidecode
+BuildRequires:	cmake
+BuildRequires:	dmidecode
 BuildRequires:	docbook-style-xsl
 BuildRequires:	pkgconfig(polkit-agent-1)
 BuildRequires:	pkgconfig(dbus-1)
@@ -71,20 +71,20 @@ BuildRequires:	xen-devel >= 3.0.4
 %endif
 BuildRequires:	xsltproc
 BuildRequires:	pkgconfig(avahi-client)
-BuildRequires:  pkgconfig(bash-completion)
+BuildRequires:	pkgconfig(bash-completion)
 BuildRequires:	pkgconfig(blkid)
-BuildRequires:  pkgconfig(libcap-ng)
+BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(fuse)
 BuildRequires:	pkgconfig(gnutls)
-BuildRequires:  pkgconfig(libacl)
-BuildRequires:  pkgconfig(libattr)
+BuildRequires:	pkgconfig(libacl)
+BuildRequires:	pkgconfig(libattr)
 BuildRequires:	pkgconfig(libcurl)
-BuildRequires:  pkgconfig(libiscsi)
+BuildRequires:	pkgconfig(libiscsi)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libparted)
-BuildRequires:  pkgconfig(libsasl2)
-BuildRequires:  pkgconfig(libselinux)
-BuildRequires:  pkgconfig(libssh)
+BuildRequires:	pkgconfig(libsasl2)
+BuildRequires:	pkgconfig(libselinux)
+BuildRequires:	pkgconfig(libssh)
 BuildRequires:	pkgconfig(libssh2)
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libxml-2.0)
@@ -92,17 +92,17 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(netcf)
 BuildRequires:	pkgconfig(pciaccess)
 BuildRequires:	pkgconfig(polkit-agent-1) polkit
-BuildRequires: 	pkgconfig(systemd)
-BuildRequires: 	pkgconfig(libsystemd)
+BuildRequires:	pkgconfig(systemd)
+BuildRequires:	pkgconfig(libsystemd)
 BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(wireshark)
-BuildRequires:  python3dist(docutils)
+BuildRequires:	python3dist(docutils)
 BuildRequires:	meson
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:  dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
+BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
@@ -119,8 +119,8 @@ initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
 %package -n %{libadmin}
-Summary:        A library to %{common_summary}
-Group:          System/Libraries
+Summary:	A library to %{common_summary}
+Group:		System/Libraries
 
 %description -n %{libadmin}
 This package contains the library needed to run programs dynamically
@@ -189,10 +189,10 @@ This package contains tools for the %{name} library.
 
 %if %{with lxc}
 %package daemon-lxc
-Summary: Server side daemon & driver required to run LXC guests
-Group: Development/Libraries
-Requires: libvirt = %{version}-%{release}
-Requires: systemd-container
+Summary:	Server side daemon & driver required to run LXC guests
+Group:		Development/Libraries
+Requires:	libvirt = %{version}-%{release}
+Requires:	systemd-container
 
 %description daemon-lxc
 Server side daemon and driver required to manage the virtualization
@@ -236,10 +236,10 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dstorage_gluster=disabled \
 	-Dopenwsman=disabled \
 	-Dhal=disabled \
-        -Dnss=enabled \
-        -Dyajl=enabled \
-        -Dqemu-user=%{qemu_user} \
-        -Dqemu-group=%{qemu_group} \
+	-Dnss=enabled \
+	-Dyajl=enabled \
+	-Dqemu-user=%{qemu_user} \
+	-Dqemu-group=%{qemu_group} \
 	-Dpolkit=enabled \
 	-Dapparmor=disabled \
 	-Dsecdriver_apparmor=disabled \
@@ -265,8 +265,6 @@ install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
-
-
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-libvirt.preset << EOF
 enable libvirtd.service
@@ -289,14 +287,14 @@ exit 0
 
 %post -n %{name}-utils
 #_tmpfilescreate %{name}
-%_post_service  libvirtd
-%_post_service  libvirt-guests
-%_post_service	virtlockd
+%_post_service libvirtd
+%_post_service libvirt-guests
+%_post_service virtlockd
 
 %preun -n %{name}-utils
 %_preun_service libvirt-guests
 %_preun_service libvirtd
-%_preun_service	virtlockd
+%_preun_service virtlockd
 
 %libpackage nss_libvirt 2
 %libpackage nss_libvirt_guest 2
@@ -374,11 +372,6 @@ exit 0
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/polkit-1/rules.d/50-libvirt.rules
-
-#{_unitdir}/virtproxyd.service
-#{_unitdir}/virtproxyd.socket
-#{_unitdir}/virtproxyd-ro.socket
-#{_unitdir}/virtproxyd-admin.socket
 %{_unitdir}/virtproxyd-tcp.socket
 %{_unitdir}/virtproxyd-tls.socket
 %{_unitdir}/virtinterfaced.service
