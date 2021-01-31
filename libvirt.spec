@@ -206,8 +206,12 @@ capabilities of LXC
 %build
 # not working with clang
 export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
-#export CC=gcc
-#export CXX=g++
+
+# As of Clang 11 (2021.01.31), there is Clang crash in aarch64 at build time. As workaround use GCC.
+%ifarch %{arm} %{armx}
+export CC=gcc
+export CXX=g++
+%endif
 
 %meson \
 	-Dudev=enabled \
