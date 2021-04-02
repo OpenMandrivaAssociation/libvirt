@@ -37,8 +37,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	7.0.0
-Release:	2
+Version:	7.2.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -338,6 +338,17 @@ exit 0
 %{_mandir}/man8/virtlockd.8.*
 %{_mandir}/man8/virtlogd.8.*
 %{_mandir}/man7/virkey*.7.*
+%{_mandir}/man8/virtinterfaced.8.*
+%{_mandir}/man8/virtlxcd.8.*
+%{_mandir}/man8/virtnetworkd.8.*
+%{_mandir}/man8/virtnodedevd.8.*
+%{_mandir}/man8/virtnwfilterd.8.*
+%{_mandir}/man8/virtproxyd.8.*
+%{_mandir}/man8/virtqemud.8.*
+%{_mandir}/man8/virtsecretd.8.*
+%{_mandir}/man8/virtstoraged.8.*
+%{_mandir}/man8/virtvboxd.8.*
+
 %{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
