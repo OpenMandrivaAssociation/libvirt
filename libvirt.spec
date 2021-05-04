@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	7.2.0
+Version:	7.3.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -372,7 +372,6 @@ exit 0
 %{_libdir}/wireshark/epan/libvirt.so
 %{_datadir}/bash-completion/completions/virsh
 %{_datadir}/bash-completion/completions/virt-admin
-%{_datadir}/bash-completion/completions/vsh
 %if %{with xen}
 %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
