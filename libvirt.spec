@@ -233,6 +233,7 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Ddriver_bhyve=disabled \
 	-Ddriver_vz=disabled \
 	-Dglusterfs=disabled \
+	-Dsanlock=disabled \
 	-Dstorage_gluster=disabled \
 	-Dopenwsman=disabled \
 	-Dnss=enabled \
