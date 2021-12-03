@@ -243,7 +243,7 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dpolkit=enabled \
 	-Dapparmor=disabled \
 	-Dsecdriver_apparmor=disabled \
-	-Dapparmor_profiles=false \
+	-Dapparmor_profiles=disabled \
 	-Dstorage_rbd=disabled \
 	-Dstorage_sheepdog=disabled \
 	-Dstorage_vstorage=disabled \
