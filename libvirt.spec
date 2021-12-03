@@ -367,6 +367,7 @@ exit 0
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
 %{_libdir}/wireshark/epan/libvirt.so
 %{_datadir}/bash-completion/completions/virsh
 %{_datadir}/bash-completion/completions/virt-admin
@@ -425,6 +426,7 @@ exit 0
 %{_unitdir}/virtvboxd-ro.socket
 %{_unitdir}/virtvboxd-admin.socket
 %{_unitdir}/virtproxy*
+%{_unitdir}/virtchd*
 %{_libexecdir}/virt-login-shell-helper
 
 %{_datadir}/augeas
@@ -450,6 +452,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/virtsecretd
 %config(noreplace) %{_sysconfdir}/sysconfig/virtstoraged
 %config(noreplace) %{_sysconfdir}/sysconfig/virtvboxd
+%config(noreplace) %{_sysconfdir}/sysconfig/virtchd
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.service
