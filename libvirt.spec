@@ -334,7 +334,7 @@ exit 0
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man1/virt-qemu-run.1.*
 %{_mandir}/man1/virt-pki-query-dn.1.*
-%{_mandir}/man1/man8/virt-ssh-helper.8.*
+%{_mandir}/man8/virt-ssh-helper.8.*
 %{_mandir}/man8/virtlockd.8.*
 %{_mandir}/man8/virtlogd.8.*
 %{_mandir}/man7/virkey*.7.*
