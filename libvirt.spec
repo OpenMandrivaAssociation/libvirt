@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	7.10.0
+Version:	8.0.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -333,6 +333,8 @@ exit 0
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man1/virt-qemu-run.1.*
+%{_mandir}/man1/virt-pki-query-dn.1.*
+%{_mandir}/man1/man8/virt-ssh-helper.8.*
 %{_mandir}/man8/virtlockd.8.*
 %{_mandir}/man8/virtlogd.8.*
 %{_mandir}/man7/virkey*.7.*
@@ -356,6 +358,7 @@ exit 0
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
 %{_prefix}/lib/firewalld/zones/libvirt.xml
+%{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
