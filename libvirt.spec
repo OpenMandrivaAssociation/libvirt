@@ -384,8 +384,8 @@ exit 0
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/polkit-1/rules.d/50-libvirt.rules
-%{_unitdir}/virtproxyd-tcp.socket
-%{_unitdir}/virtproxyd-tls.socket
+#{_unitdir}/virtproxyd-tcp.socket
+#{_unitdir}/virtproxyd-tls.socket
 %{_unitdir}/virtinterfaced.service
 %{_unitdir}/virtinterfaced.socket
 %{_unitdir}/virtinterfaced-ro.socket
