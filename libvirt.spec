@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	8.0.0
+Version:	8.3.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -333,6 +333,7 @@ exit 0
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man1/virt-qemu-run.1.*
+%{_mandri}/man8/libvirt-guests.8.*
 %{_mandir}/man1/virt-pki-query-dn.1.*
 %{_mandir}/man8/virt-ssh-helper.8.*
 %{_mandir}/man8/virtlockd.8.*
@@ -384,8 +385,8 @@ exit 0
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
 %{_datadir}/polkit-1/rules.d/50-libvirt.rules
-%{_unitdir}/virtproxyd-tcp.socket
-%{_unitdir}/virtproxyd-tls.socket
+#{_unitdir}/virtproxyd-tcp.socket
+#{_unitdir}/virtproxyd-tls.socket
 %{_unitdir}/virtinterfaced.service
 %{_unitdir}/virtinterfaced.socket
 %{_unitdir}/virtinterfaced-ro.socket
@@ -440,22 +441,7 @@ exit 0
 
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/libvirtd
-%config(noreplace) %{_sysconfdir}/sysconfig/libvirt-guests
-%config(noreplace) %{_sysconfdir}/sysconfig/virtlockd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtlogd
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
-%config(noreplace) %{_sysconfdir}/sysconfig/virtinterfaced
-%config(noreplace) %{_sysconfdir}/sysconfig/virtlxcd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtnetworkd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtnodedevd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtnwfilterd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtproxyd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtqemud
-%config(noreplace) %{_sysconfdir}/sysconfig/virtsecretd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtstoraged
-%config(noreplace) %{_sysconfdir}/sysconfig/virtvboxd
-%config(noreplace) %{_sysconfdir}/sysconfig/virtchd
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.service
