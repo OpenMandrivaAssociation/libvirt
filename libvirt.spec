@@ -333,7 +333,7 @@ exit 0
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
 %{_mandir}/man1/virt-qemu-run.1.*
-%{_mandri}/man8/libvirt-guests.8.*
+%{_mandir}/man8/libvirt-guests.8.*
 %{_mandir}/man1/virt-pki-query-dn.1.*
 %{_mandir}/man8/virt-ssh-helper.8.*
 %{_mandir}/man8/virtlockd.8.*
