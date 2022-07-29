@@ -57,7 +57,7 @@ BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
 BuildRequires:	glibc-devel
 BuildRequires:	nfs-utils
-BuildRequires:	open-iscsi
+#BuildRequires:	open-iscsi
 #BuildRequires:	qemu
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
