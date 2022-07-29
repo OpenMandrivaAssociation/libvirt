@@ -102,7 +102,7 @@ BuildRequires:	python3dist(docutils)
 BuildRequires:	meson
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
+BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
