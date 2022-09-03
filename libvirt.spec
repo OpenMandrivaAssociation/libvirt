@@ -37,8 +37,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	8.4.0
-Release:	2
+Version:	8.7.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -57,7 +57,7 @@ BuildRequires:	libxml2-utils
 BuildRequires:	lvm2
 BuildRequires:	glibc-devel
 BuildRequires:	nfs-utils
-BuildRequires:	open-iscsi
+BuildRequires:	iscsi-initiator-utils
 #BuildRequires:	qemu
 BuildRequires:	systemtap-devel
 BuildRequires:	gettext-devel
@@ -102,7 +102,7 @@ BuildRequires:	python3dist(docutils)
 BuildRequires:	meson
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
-BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 open-iscsi parted polkit radvd systemd
+BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 iscsi-initiator-utils parted polkit radvd systemd
 
 Requires:	cyrus-sasl
 Requires:	gettext
@@ -253,10 +253,6 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 %install
 %meson_install
 
-# ****ing meson doesn't know where systemd files go
-mkdir %{buildroot}/lib
-mv %{buildroot}%{_prefix}/lib/systemd %{buildroot}/lib
-
 rm -f %{buildroot}%{_initrddir}/libvirt-guests
 
 install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
@@ -350,7 +346,6 @@ exit 0
 %{_mandir}/man8/virtstoraged.8.*
 %{_mandir}/man8/virtvboxd.8.*
 
-%{_sbindir}/*
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/qemu/
 %dir %attr(0700, root, root) %{_localstatedir}/log/libvirt/lxc/
 %{_libexecdir}/libvirt_iohelper
