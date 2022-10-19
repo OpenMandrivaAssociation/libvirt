@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	8.7.0
+Version:	8.8.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -243,7 +243,6 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dsecdriver_apparmor=disabled \
 	-Dapparmor_profiles=disabled \
 	-Dstorage_rbd=disabled \
-	-Dstorage_sheepdog=disabled \
 	-Dstorage_vstorage=disabled \
 	-Dstorage_zfs=disabled \
 	-Dnumad=disabled
