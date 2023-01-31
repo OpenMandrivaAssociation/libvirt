@@ -37,8 +37,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	8.8.0
-Release:	2
+Version:	9.0.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -324,6 +324,8 @@ exit 0
 %{_mandir}/man1/virt-admin.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1.*
+%{_mandir}/man1/virt-qemu-qmp-proxy.1*
+%{_mandir}/man1/virt-qemu-sev-validate.1*
 %{_mandir}/man8/libvirtd.8.*
 %{_mandir}/man1/virt-host-validate.1.*
 %{_mandir}/man1/virt-login-shell.1.*
@@ -352,7 +354,8 @@ exit 0
 %{_libexecdir}/libvirt_lxc
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
-%{_prefix}/lib/firewalld/zones/libvirt.xml
+%{_prefix}/lib/firewalld/policies/libvirt-*.xml
+%{_prefix}/lib/firewalld/zones/*.xml
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
