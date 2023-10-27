@@ -245,7 +245,8 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dstorage_rbd=disabled \
 	-Dstorage_vstorage=disabled \
 	-Dstorage_zfs=disabled \
-	-Dnumad=disabled
+	-Dnumad=disabled \
+ 	-Dlibnbd=disabled
 
 %meson_build
 
