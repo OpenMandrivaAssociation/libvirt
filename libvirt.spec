@@ -371,7 +371,7 @@ exit 0
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
-%{_libdir}/wireshark/epan/libvirt.so
+#{_libdir}/wireshark/epan/libvirt.so
 %{_datadir}/bash-completion/completions/virsh
 %{_datadir}/bash-completion/completions/virt-admin
 %if %{with xen}
