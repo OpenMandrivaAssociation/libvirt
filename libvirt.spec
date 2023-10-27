@@ -37,8 +37,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	9.1.0
-Release:	3
+Version:	9.8.0
+Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		http://libvirt.org/
@@ -245,7 +245,9 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dstorage_rbd=disabled \
 	-Dstorage_vstorage=disabled \
 	-Dstorage_zfs=disabled \
-	-Dnumad=disabled
+	-Dnumad=disabled \
+ 	-Dlibnbd=disabled \
+  	-Dwireshark_dissector=disabled
 
 %meson_build
 
@@ -369,7 +371,7 @@ exit 0
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
 %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
-%{_libdir}/wireshark/epan/libvirt.so
+#{_libdir}/wireshark/epan/libvirt.so
 %{_datadir}/bash-completion/completions/virsh
 %{_datadir}/bash-completion/completions/virt-admin
 %if %{with xen}
