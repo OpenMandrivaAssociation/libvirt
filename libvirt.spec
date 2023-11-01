@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	9.8.0
+Version:	9.9.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
