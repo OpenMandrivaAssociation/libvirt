@@ -360,6 +360,7 @@ exit 0
 %{_prefix}/lib/firewalld/policies/libvirt-*.xml
 %{_prefix}/lib/firewalld/zones/*.xml
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
+%{_prefix}/lib/sysusers.d/libvirt-qemu.conf
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
