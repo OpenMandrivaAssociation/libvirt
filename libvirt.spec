@@ -37,12 +37,12 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	10.0.0
+Version:	10.2.0
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
-Url:		http://libvirt.org/
-Source0:	http://libvirt.org/sources/%{name}-%{version}.tar.xz
+Url:		https://libvirt.org/
+Source0:	https://libvirt.org/sources/%{name}-%{version}.tar.xz
 Source1:	%{name}-tmpfiles.conf
 
 BuildRequires:	cmake
