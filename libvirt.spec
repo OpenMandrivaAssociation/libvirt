@@ -37,7 +37,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	10.3.0
+Version:	git.2762ffaf
 Release:	1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -206,8 +206,9 @@ capabilities of LXC
 %build
 # not working with clang
 export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
-#export CC=gcc
-#export CXX=g++
+export CC=gcc
+export CXX=g++
+export QA_RPATHS=0x0001
 
 %meson \
 	-Dudev=enabled \
@@ -240,6 +241,7 @@ export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
 	-Dyajl=enabled \
 	-Dpolkit=enabled \
 	-Dapparmor=disabled \
+	-Drpath=disabled \
 	-Dsecdriver_apparmor=disabled \
 	-Dapparmor_profiles=disabled \
 	-Dstorage_rbd=disabled \
