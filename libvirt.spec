@@ -35,15 +35,24 @@ capabilities of recent versions of Linux.
 %define qemu_user  qemu
 %define qemu_group  qemu
 
+%define snapshot 20240529
+
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	git.2762ffaf
-Release:	1
+Version:	10.4.0
+Release:	%{?snapshot:0.%{snapshot}.}1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		https://libvirt.org/
+%if 0%{!?snapshot:1}
 Source0:	https://libvirt.org/sources/%{name}-%{version}.tar.xz
-Source1:	%{name}-tmpfiles.conf
+%else
+Source0:	https://gitlab.com/libvirt/libvirt/-/archive/38c6c364088e3ba2d7e0b18690af6800d338c6a9/libvirt-38c6c364088e3ba2d7e0b18690af6800d338c6a9.tar.bz2
+# Commit hash for keycodemapdb must match the one seen at
+# https://gitlab.com/libvirt/libvirt/-/tree/master/subprojects?ref_type=heads
+Source1:	https://gitlab.com/keycodemap/keycodemapdb/-/archive/22b8996dba9041874845c7446ce89ec4ae2b713d/keycodemapdb-22b8996dba9041874845c7446ce89ec4ae2b713d.tar.bz2
+%endif
+Source2:	%{name}-tmpfiles.conf
 
 BuildRequires:	cmake
 BuildRequires:	dmidecode
@@ -99,7 +108,47 @@ BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(wireshark)
 BuildRequires:	python3dist(docutils)
-BuildRequires:	meson
+BuildSystem:	meson
+BuildOption:	-Dudev=enabled
+BuildOption:	-Dinit_script=systemd
+%if !%{with xen}
+BuildOption:	-Ddriver_libxl=disabled
+%endif
+%if !%{with lxc}
+BuildOption:	-Ddriver_lxc=disabled
+%endif
+%if !%{with vbox}
+BuildOption:	-Ddriver_vbox=disabled
+%endif
+%if !%{with esx}
+BuildOption:	-Ddriver_esx=disabled
+%endif
+%if !%{with hyperv}
+BuildOption:	-Ddriver_hyperv=disabled
+%endif
+%if !%{with vmware}
+BuildOption:	-Ddriver_vmware=disabled
+%endif
+BuildOption:	-Ddriver_bhyve=disabled
+BuildOption:	-Ddriver_vz=disabled
+BuildOption:	-Dglusterfs=disabled
+BuildOption:	-Dsanlock=disabled
+BuildOption:	-Dstorage_gluster=disabled
+BuildOption:	-Dopenwsman=disabled
+BuildOption:	-Dnss=enabled
+BuildOption:	-Dyajl=enabled
+BuildOption:	-Dpolkit=enabled
+BuildOption:	-Dapparmor=disabled
+BuildOption:	-Drpath=disabled
+BuildOption:	-Dsecdriver_apparmor=disabled
+BuildOption:	-Dapparmor_profiles=disabled
+BuildOption:	-Dstorage_rbd=disabled
+BuildOption:	-Dstorage_vstorage=disabled
+BuildOption:	-Dstorage_zfs=disabled
+BuildOption:	-Dnumad=disabled
+BuildOption: 	-Dnbdkit=disabled
+BuildOption:  	-Dnbdkit_config_default=disabled
+BuildOption:  	-Dwireshark_dissector=disabled
 
 # add userspace tools here because the full path to each tool is hard coded into the libvirt.so* library.
 BuildRequires:	dmsetup dnsmasq-base ebtables iproute2 iptables kmod lvm2 iscsi-initiator-utils parted polkit radvd systemd
@@ -199,67 +248,22 @@ Server side daemon and driver required to manage the virtualization
 capabilities of LXC
 %endif
 
-%prep
-%setup -q
-%autopatch -p1
+%prep -a
+%if 0%{?snapshot:1}
+# Deal with the git submodule
+rmdir subprojects/keycodemapdb
+cd subprojects
+tar xf %{S:1}
+mv keycodemapdb-* keycodemapdb
+%endif
 
-%build
-# not working with clang
-export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{_specdir}/%{name}.spec)
-export CC=gcc
-export CXX=g++
-export QA_RPATHS=0x0001
+%conf -p
+export SOURCE_DATE_EPOCH=$(stat --printf='%Y' %{__file_name})
 
-%meson \
-	-Dudev=enabled \
-	-Dinit_script=systemd \
-	%if !%{with xen}
-	-Ddriver_libxl=disabled \
-	%endif
-	%if !%{with lxc}
-	-Ddriver_lxc=disabled \
-	%endif
-	%if !%{with vbox}
-	-Ddriver_vbox=disabled \
-	%endif
-	%if !%{with esx}
-	-Ddriver_esx=disabled \
-	%endif
-	%if !%{with hyperv}
-	-Ddriver_hyperv=disabled \
-	%endif
-	%if !%{with vmware}
-	-Ddriver_vmware=disabled \
-	%endif
-	-Ddriver_bhyve=disabled \
-	-Ddriver_vz=disabled \
-	-Dglusterfs=disabled \
-	-Dsanlock=disabled \
-	-Dstorage_gluster=disabled \
-	-Dopenwsman=disabled \
-	-Dnss=enabled \
-	-Dyajl=enabled \
-	-Dpolkit=enabled \
-	-Dapparmor=disabled \
-	-Drpath=disabled \
-	-Dsecdriver_apparmor=disabled \
-	-Dapparmor_profiles=disabled \
-	-Dstorage_rbd=disabled \
-	-Dstorage_vstorage=disabled \
-	-Dstorage_zfs=disabled \
-	-Dnumad=disabled \
- 	-Dnbdkit=disabled \
-  	-Dnbdkit_config_default=disabled \
-  	-Dwireshark_dissector=disabled
-
-%meson_build
-
-%install
-%meson_install
-
+%install -a
 rm -f %{buildroot}%{_initrddir}/libvirt-guests
 
-install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -D -p -m 0644 %{S:2} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 install -d -m 0755 %{buildroot}%{_var}/lib/%{name}
 %find_lang %{name}
 
@@ -359,6 +363,7 @@ exit 0
 %{_libexecdir}/libvirt_lxc
 %{_libexecdir}/libvirt_parthelper
 %{_libexecdir}/libvirt-guests.sh
+%{_libexecdir}/libvirt-ssh-proxy
 %{_prefix}/lib/firewalld/policies/libvirt-*.xml
 %{_prefix}/lib/firewalld/zones/*.xml
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
@@ -444,6 +449,7 @@ exit 0
 
 %config(noreplace) %{_sysconfdir}/libvirt
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
+%config(noreplace) %{_sysconfdir}/ssh/ssh_config.d/30-libvirt-ssh-proxy.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
