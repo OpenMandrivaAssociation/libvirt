@@ -35,7 +35,7 @@ capabilities of recent versions of Linux.
 %define qemu_user  qemu
 %define qemu_group  qemu
 
-%define snapshot 20240529
+#define snapshot 20240529
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
