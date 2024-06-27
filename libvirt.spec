@@ -40,7 +40,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	10.4.0
-Release:	%{?snapshot:0.%{snapshot}.}1
+Release:	%{?snapshot:0.%{snapshot}.}2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		https://libvirt.org/
@@ -108,6 +108,7 @@ BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(wireshark)
 BuildRequires:	python3dist(docutils)
+Requires:	qemu-img
 BuildSystem:	meson
 BuildOption:	-Dudev=enabled
 BuildOption:	-Dinit_script=systemd
