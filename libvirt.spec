@@ -39,7 +39,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	10.6.0
+Version:	10.7.0
 Release:	%{?snapshot:0.%{snapshot}.}1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
