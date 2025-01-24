@@ -251,7 +251,7 @@ capabilities of LXC
 %endif
 
 %prep -a
-%if 0%{?snapshot:1}
+%if 1%{?snapshot:1}
 # Deal with the git submodule
 rmdir subprojects/keycodemapdb
 cd subprojects
