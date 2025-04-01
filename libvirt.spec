@@ -39,7 +39,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	10.10.0
+Version:	11.2.0
 Release:	%{?snapshot:0.%{snapshot}.}1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -369,7 +369,6 @@ exit 0
 %{_prefix}/lib/firewalld/policies/libvirt-*.xml
 %{_prefix}/lib/firewalld/zones/*.xml
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
-%{_prefix}/lib/sysusers.d/libvirt-qemu.conf
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
@@ -380,7 +379,6 @@ exit 0
 %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_libdir}/libvirt/storage-backend/libvirt_storage_*.so
-%{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
 #{_libdir}/wireshark/epan/libvirt.so
 %{_datadir}/bash-completion/completions/virsh
@@ -390,7 +388,6 @@ exit 0
 %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %endif
 %{_libdir}/libvirt/lock-driver/lockd.so
-%{_var}/run/libvirt
 %{_var}/lib/libvirt
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
@@ -466,3 +463,4 @@ exit 0
 %{_unitdir}/libvirtd-tcp.socket
 %{_unitdir}/libvirtd-tls.socket
 %{_tmpfilesdir}/%{name}.conf
+%{_sysusersdir}/*.conf
