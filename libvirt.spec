@@ -40,7 +40,7 @@ capabilities of recent versions of Linux.
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
 Version:	11.2.0
-Release:	%{?snapshot:0.%{snapshot}.}1
+Release:	%{?snapshot:0.%{snapshot}.}2
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		https://libvirt.org/
@@ -189,6 +189,7 @@ linked with %{name}.
 Summary:	A library to %{common_summary}
 Group:		System/Libraries
 Conflicts:	%{_lib}virt0 < 1.0.2-1
+Requires:	qemu-kvm
 
 %description -n %{libqemu}
 This package contains the library needed to run programs dynamically
