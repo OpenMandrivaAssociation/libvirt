@@ -6,10 +6,14 @@
 capabilities of recent versions of Linux.
 
 %define major 0
-%define libname %mklibname virt %{major}
-%define libadmin %mklibname virt-admin %{major}
-%define libqemu %mklibname virt-qemu %{major}
-%define liblxc %mklibname virt-lxc %{major}
+%define libname %mklibname virt
+%define oldlibname %mklibname virt 0
+%define libadmin %mklibname virt-admin
+%define oldlibadmin %mklibname virt-admin 0
+%define libqemu %mklibname virt-qemu
+%define oldlibqemu %mklibname virt-qemu 0
+%define liblxc %mklibname virt-lxc
+%define oldliblxc %mklibname virt-lxc 0
 %define devname %mklibname -d virt
 
 # libxenstore is not versionned properly
@@ -172,6 +176,7 @@ integrate other virtualization mechanisms if needed.
 %package -n %{libadmin}
 Summary:	A library to %{common_summary}
 Group:		System/Libraries
+%rename %{oldlibadmin}
 
 %description -n %{libadmin}
 This package contains the library needed to run programs dynamically
@@ -182,6 +187,7 @@ Summary:	A library to %{common_summary}
 Group:		System/Libraries
 # libvirt uses RPC calls to virtqemud
 Requires:	%{name}-utils = %{EVRD}
+%rename %{oldlibname}
 
 %description -n %{libname}
 This package contains the library needed to run programs dynamically
@@ -192,6 +198,7 @@ Summary:	A library to %{common_summary}
 Group:		System/Libraries
 Conflicts:	%{_lib}virt0 < 1.0.2-1
 Requires:	qemu-kvm
+%rename %{oldlibqemu}
 
 %description -n %{libqemu}
 This package contains the library needed to run programs dynamically
@@ -200,6 +207,7 @@ linked with %{name}.
 %package -n %{liblxc}
 Summary:	A library to %{common_summary}
 Group:		System/Libraries
+%rename %{oldliblxc}
 
 %description -n %{liblxc}
 This package contains the library needed to run programs dynamically
