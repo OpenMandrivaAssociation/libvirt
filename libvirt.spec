@@ -39,7 +39,7 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	11.3.0
+Version:	11.4.0
 Release:	%{?snapshot:0.%{snapshot}.}1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
@@ -180,6 +180,8 @@ linked with %{name}.
 %package -n %{libname}
 Summary:	A library to %{common_summary}
 Group:		System/Libraries
+# libvirt uses RPC calls to virtqemud
+Requires:	%{name}-utils = %{EVRD}
 
 %description -n %{libname}
 This package contains the library needed to run programs dynamically
