@@ -379,7 +379,6 @@ exit 0
 %{_libexecdir}/libvirt-ssh-proxy
 %{_prefix}/lib/firewalld/policies/libvirt-*.xml
 %{_prefix}/lib/firewalld/zones/*.xml
-%{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
 %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
