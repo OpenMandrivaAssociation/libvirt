@@ -472,5 +472,7 @@ exit 0
 %{_unitdir}/libvirtd-admin.socket
 %{_unitdir}/libvirtd-tcp.socket
 %{_unitdir}/libvirtd-tls.socket
+%{_unitdir}/libvirtd.service.d/10-secret.conf
+%{_unitdir}/virt-secret-init-encryption.service
 %{_tmpfilesdir}/%{name}.conf
 %{_sysusersdir}/*.conf
