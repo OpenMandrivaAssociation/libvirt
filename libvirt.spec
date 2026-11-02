@@ -464,6 +464,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 %config(noreplace) %{_sysconfdir}/ssh/ssh_config.d/30-libvirt-ssh-proxy.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd*
+%config(noreplace) %{_sysconfdir}/logrotate.d/virt*
 %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
 %{_presetdir}/86-libvirt.preset
 %{_unitdir}/libvirtd.service
