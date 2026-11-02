@@ -43,8 +43,8 @@ capabilities of recent versions of Linux.
 
 Summary:	Toolkit to %{common_summary}
 Name:		libvirt
-Version:	12.5.0
-Release:	%{?snapshot:0.%{snapshot}.}2
+Version:	12.9.0
+Release:	%{?snapshot:0.%{snapshot}.}1
 License:	LGPLv2+
 Group:		System/Kernel and hardware
 Url:		https://libvirt.org/
@@ -112,11 +112,15 @@ BuildRequires:	pkgconfig(xmlrpc)
 BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(wireshark)
-BuildRequires:	python3dist(docutils)
+BuildRequires:	python%{pyver}dist(docutils)
 Requires:	qemu-img
 BuildSystem:	meson
 BuildOption:	-Dudev=enabled
 BuildOption:	-Dinit_script=systemd
+# os-release has no ID_LIKE, so meson's distro detection compiles in
+# root:root. These macros are the non-root identity.
+BuildOption:	-Dqemu_user=%{qemu_user}
+BuildOption:	-Dqemu_group=%{qemu_group}
 %if !%{with xen}
 BuildOption:	-Ddriver_libxl=disabled
 %endif
